@@ -1,0 +1,56 @@
+.containerElementSlider {
+    width: 40%;
+}
+
+.containerSlider{
+    position: relative;
+}
+
+.containerRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.containerRow__price{
+    display: flex;
+    flex-direction: row;
+    padding: 0 4.7rem 0.3rem 2rem;
+}
+
+p.sliderHyphen{
+    padding: 0.1rem 0.3rem 0 1rem;
+}
+
+.containerSlider__slider {
+    pointer-events: none;
+    margin: 0 0 0.7rem 0;
+    cursor: pointer;
+    padding-left: 20%;
+    padding-right: 20%;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    border: 1px solid #6FCF97;
+    border-radius: 10px;
+    height: 40px;
+}
+  
+.containerSlider__slider.focusable {
+    border: 1px solid #ffffff
+}
+  
+.thumb {
+    cursor: pointer;
+    border-color: #ffffff;
+    border-style: solid;
+    background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
+    border-radius: 50%;
+    position: absolute;
+}
+  
+.track {
+    pointer-events: none;
+    height: 100%;
+    background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
+}
