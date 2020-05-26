@@ -1,7 +1,6 @@
 const path = require("path");
 const fs = require("fs");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const PATHS = {
@@ -38,24 +37,6 @@ module.exports = {
         exclude: "/node_modules/",
       },
       {
-        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              name: '[name].[ext]',
-            },
-          },
-        ],
-      },
-      {
-        test: /\.(png|jpg|gif|svg)$/,
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]',
-        },
-      },
-      {
         test: /\.scss$/,
         use: [
           'style-loader',
@@ -70,9 +51,6 @@ module.exports = {
               sourceMap: true,
               config: { path: `./postcss.config.js` },
             },
-          },
-          {
-            loader: 'resolve-url-loader',
           },
           {
             loader: 'sass-loader',
@@ -110,12 +88,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: `css/[name].css`,
     }),
-
-    new CopyWebpackPlugin([
-      { from: `${PATHS.src}/img`, to: "img" },
-      { from: `${PATHS.src}/fonts`, to: "fonts" },
-      { from: `${PATHS.src}/static`, to: "" },
-    ]),
 
     ...PAGES.map(
       (page) =>
