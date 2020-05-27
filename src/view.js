@@ -1,29 +1,68 @@
 import $ from 'jquery'
 import  {inputsValue} from './model.js'
 
-let sliderThumb = $(".containerSlider span");
-let slider = $(".bodySlider");
-
-$(sliderThumb).on("mousedown", SliderMovement);
-
-function SliderMovement(e){
-  $(slider).on("mousemove", CursorPosition);
-  $(document).on("mouseup", CursorPositionStop);
-}
-
-function CursorPosition(e){
-  let thumbDisplacement = event.clientX;
-  let positionContainerLeft = $(slider).offset().left;
-  if (thumbDisplacement >= inputsValue.sliderWidth+positionContainerLeft-inputsValue.thumbHeight){
-    thumbDisplacement = inputsValue.sliderWidth+positionContainerLeft-inputsValue.thumbHeight
+//Создание Шкалы произвольной ширины, с возможностью изменять ее позитию (горизонтальная или вертикальная)
+class Scale {
+  constructor(name) {
+    this.name = name;
   }
-  console.log(thumbDisplacement)
-  $(sliderThumb).css('left', (thumbDisplacement - positionContainerLeft) +'px');
+  CreateScale() {
+    $(".containerSlider").append($('<div class="scale"></div>'));
+    if (inputsValue.positionHorizontal === true){
+      $(".scale").css('width', inputsValue.sliderWidth);
+    }
+    else {
+      $(".scale").css('height', inputsValue.sliderWidth);
+    } 
+  }
 }
 
-function CursorPositionStop(){
-  $(slider).off("mousemove");
+// Ползунок
+class Thumb {
+  constructor(name) {
+    this.name = name;
+  }
+  CreateThumb() {
+    $(".scale").append($('<span class="thumb thumb_type_1" ></span>'));
+    if (inputsValue.positionHorizontal === true){
+      $(".thumb").css("bottom", ("-7px"));
+    }
+    else {
+      $(".thumb").css("left", ("-7px"));
+    }
+  }
+  ThumbMovement() {
+    $(".thumb").mousedown(function (){
+      $(".scale").mousemove(function (){
+        let thumbDisplacement = 0;
+        let direction = 0;
+        if (inputsValue.positionHorizontal === true){
+          thumbDisplacement = event.clientX;
+          direction = 'left';
+        }
+        else {
+          thumbDisplacement = event.clientY;
+          direction = 'top';
+        }
+        let positionContainerLeft = $(".scale").offset().left;
+        if (thumbDisplacement >= inputsValue.sliderWidth+positionContainerLeft - 16*1.35){
+          thumbDisplacement = inputsValue.sliderWidth+positionContainerLeft - 16*1.35;
+        }
+        else if (thumbDisplacement <= positionContainerLeft){
+          thumbDisplacement = positionContainerLeft;
+        }
+        $(".thumb").css(direction, (thumbDisplacement - positionContainerLeft) +'px');
+      });
+      $(document).mouseup(function (){
+        $(".scale").off("mousemove");
+      });
+    });
+  }
 }
+
+new Scale ('horizontalScale').CreateScale();
+new Thumb ('thumbOne').CreateThumb();
+new Thumb ('thumbOne').ThumbMovement();
 
 
 

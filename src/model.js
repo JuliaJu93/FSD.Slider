@@ -5,5 +5,6 @@ export let inputsValue = {
     thumbWidth: 16,
     thumbHeight: 16,  
     values: [5000, 10000],
-    value: 5 
+    value: 5,
+    positionHorizontal: true,
 };

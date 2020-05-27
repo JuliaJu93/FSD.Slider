@@ -1,29 +1,29 @@
-.containerSlider{
-    width: 270px;
-    height: 20px;
-    margin: 150px;
-}
-
-.bodySlider{
-    width: 100%;
-    border: 1px solid black;
+.scale{
+    border: 1px solid #6FCF97;
+    width: 6px;
     height: 6px;
     border-radius: 5px;
     position: relative;
 }
 
-.containerSlider span{
+.thumb{
     cursor: pointer;
     border-color: #ffffff;
     border-style: solid;
     background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
     border-radius: 50%;
     position: absolute;
-    bottom: -7px;
-    left: 0;
     height: 16px;
     width: 16px;
 }
+
+.thumb_type_1{
+    left: 0;
+}
+.thumb_type_2{
+    left: 50px;
+}
+
 
 
 
