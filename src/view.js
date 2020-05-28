@@ -33,7 +33,7 @@ class Thumb {
   }
   ThumbMovement() {
     $(".thumb").mousedown(function (){
-      $(".scale").mousemove(function (){
+      $(document).mousemove(function (){
         let thumbDisplacement = 0;
         let direction = 0;
         if (inputsValue.positionHorizontal === true){
@@ -54,7 +54,7 @@ class Thumb {
         $(".thumb").css(direction, (thumbDisplacement - positionContainerLeft) +'px');
       });
       $(document).mouseup(function (){
-        $(".scale").off("mousemove");
+        $(document).off("mousemove");
       });
     });
   }
