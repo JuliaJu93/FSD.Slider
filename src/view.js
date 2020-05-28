@@ -6,13 +6,13 @@ class Scale {
   constructor(name) {
     this.name = name;
   }
-  CreateScale() {
-    $(".containerSlider").append($('<div class="scale"></div>'));
-    if (inputsValue.positionHorizontal === true){
-      $(".scale").css('width', inputsValue.sliderWidth);
+  CreateScale(parentElement, nameModel) {
+    $(parentElement).append($('<div class="scale"></div>'));
+    if (nameModel.positionHorizontal === true){
+      $(parentElement).find(".scale").css('width', nameModel.sliderWidth);
     }
     else {
-      $(".scale").css('height', inputsValue.sliderWidth);
+      $(parentElement).find(".scale").css('height', nameModel.sliderWidth);
     } 
   }
 }
@@ -21,21 +21,21 @@ class Scale {
 class Thumb {
   constructor(name) {
   }
-  CreateThumb() {
-    $(".scale").append($('<span class="thumb thumb_type_1" ></span>'));
-    if (inputsValue.positionHorizontal === true){
-      $(".thumb").css("bottom", ("-7px"));
+  CreateThumb(parentElement, nameModel) {
+    $(parentElement).find(".scale").append($('<span class="thumb" ></span>'));
+    if (nameModel.positionHorizontal === true){
+      $(parentElement).find(".thumb").css("bottom", ("-7px"));
     }
     else {
-      $(".thumb").css("left", ("-7px"));
+      $(parentElement).find(".thumb").css("left", ("-7px"));
     }
   }
-  ThumbMovement() {
-    $(".thumb").mousedown(function (){
+  ThumbMovement(parentElement, nameModel) {
+    $(parentElement).find(".thumb").mousedown(function (){
       $(document).mousemove($.proxy(function (){
         let thumbDisplacement = 0;
         let direction = 0;
-        if (inputsValue.positionHorizontal === true){
+        if (nameModel.positionHorizontal === true){
           thumbDisplacement = event.clientX;
           direction = 'left';
         }
@@ -43,9 +43,9 @@ class Thumb {
           thumbDisplacement = event.clientY;
           direction = 'top';
         }
-        let positionContainerLeft = $(".scale").offset().left;
-        if (thumbDisplacement >= inputsValue.sliderWidth+positionContainerLeft - 16*1.35){
-          thumbDisplacement = inputsValue.sliderWidth+positionContainerLeft - 16*1.35;
+        let positionContainerLeft = $(parentElement).find(".scale").offset().left;
+        if (thumbDisplacement >= nameModel.sliderWidth+positionContainerLeft - 16*1.35){
+          thumbDisplacement = nameModel.sliderWidth+positionContainerLeft - 16*1.35;
         }
         else if (thumbDisplacement <= positionContainerLeft){
           thumbDisplacement = positionContainerLeft;
@@ -63,21 +63,21 @@ class Slider {
   constructor(name) {
     this.name = name;
   }
-  CreateSlider() {
-    new Scale ('horizontalScale').CreateScale();
-    if (inputsValue.oneThumb === true){
-      new Thumb ('thumbOne').CreateThumb();
+  CreateSlider(nameScale, parentElement, nameModel) {
+    new Scale (nameScale).CreateScale(parentElement, nameModel);
+    if (nameModel.oneThumb === true){
+      new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
     }
     else{
-      new Thumb ('thumbOne').CreateThumb();
-      new Thumb ('thumbTwo').CreateThumb();
+      new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
+      new Thumb ('thumbTwo').CreateThumb(parentElement, nameModel);
     }
-    new Thumb ('thumbOne').ThumbMovement();
+    new Thumb ('thumbOne').ThumbMovement(parentElement, nameModel);
   }
 }
 
-new Slider ('SliderOne').CreateSlider();
-
+new Slider ('SliderOne').CreateSlider('horizontalScale', ".containerSlider", inputsValue);
+new Slider ('SliderOne').CreateSlider('jScale', ".containerSlider2", inputsValue);
 
 
 
