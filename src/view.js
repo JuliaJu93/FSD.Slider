@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import  {inputsValue} from './model.js'
+import  {inputsValue, i} from './model.js'
 
 //Создание Шкалы произвольной ширины, с возможностью изменять ее позитию (горизонтальная или вертикальная)
 class Scale {
@@ -33,9 +33,13 @@ class Thumb {
   ThumbMovement(parentElement, nameModel) {
     $(parentElement).find(".thumb").mousedown(function (){
       $(document).mousemove($.proxy(function (){
+        //Задаем переменные необходимые для рассчета
         let thumbDisplacement = 0;
         let direction = 0;
-        if (nameModel.positionHorizontal === true){
+        let end = 0;
+        let start = 0;
+        //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
+        if (nameModel.positionHorizontal){
           thumbDisplacement = event.clientX;
           direction = 'left';
         }
@@ -43,14 +47,26 @@ class Thumb {
           thumbDisplacement = event.clientY;
           direction = 'top';
         }
-        let positionContainerLeft = $(parentElement).find(".scale").offset().left;
-        if (thumbDisplacement >= nameModel.sliderWidth+positionContainerLeft - 16*1.35){
-          thumbDisplacement = nameModel.sliderWidth+positionContainerLeft - 16*1.35;
+        console.log(thumbDisplacement)
+        let positionContainer = $(parentElement).find(".scale").offset()[direction];
+        // Проверяем какая из ручек движется и в зависимости от этого задаем начало и конец траектории движения
+        if (this === $(parentElement).find(".thumb:first-child")[0]){
+          end = $(parentElement).find(".thumb:last-child").offset()[direction];
+          start = positionContainer;
         }
-        else if (thumbDisplacement <= positionContainerLeft){
-          thumbDisplacement = positionContainerLeft;
+        else{
+          end =  positionContainer + nameModel.sliderWidth;
+          start = $(parentElement).find(".thumb:first-child").offset()[direction] + 16*1.25;
         }
-        $(this).css(direction, (thumbDisplacement - positionContainerLeft) +'px');
+        //Ограничиваем движения ручек по шкале в зависимости от заданного начала и конца траектории
+        if (thumbDisplacement >= end  - 16*1.35){
+          thumbDisplacement = end  - 16*1.35;
+        }
+        else if (thumbDisplacement <= start){
+          thumbDisplacement = start;
+        }
+        //Двигаем ручки
+        $(this).css(direction, (thumbDisplacement - positionContainer +'px'));
       }, this) );
       $(document).mouseup(function (){
         $(document).off("mousemove");
@@ -96,8 +112,8 @@ class Slider {
 }
 
 new Slider ('SliderOne').CreateSlider('horizontalScale', ".containerSlider", inputsValue);
-new Slider ('SliderOne').CreateSlider('jScale', ".containerSlider2", inputsValue);
-
+new Slider ('Slidertwo').CreateSlider('jScale', ".containerSlider2", i);
+new Slider ('Slidervv').CreateSlider('jSxccc', ".containerSlider3", inputsValue);
 
 
 // import  {inputsValue} from './model.js'
