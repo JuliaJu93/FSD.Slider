@@ -57,8 +57,26 @@ class Thumb {
       });
     });
   }
+  //Позиция ручек по умолчанию
+  DefaultPosition(parentElement, nameModel){
+    let direction = 0;
+    if (nameModel.positionHorizontal === true){
+      direction = 'left';
+    }
+    else {
+      direction = 'top';
+    }
+    if (nameModel.oneThumb === true){
+      $(parentElement).find(".thumb").css(direction, (nameModel.value + 'px'));
+    }
+    else{
+      $(parentElement).find(".thumb:first-child").css(direction, (nameModel.values[0] + 'px'));
+      $(parentElement).find(".thumb:last-child").css(direction, (nameModel.values[1] + 'px'));
+    }
+  }
 }
 
+//Создание ползунка
 class Slider {
   constructor(name) {
     this.name = name;
@@ -73,6 +91,7 @@ class Slider {
       new Thumb ('thumbTwo').CreateThumb(parentElement, nameModel);
     }
     new Thumb ('thumbOne').ThumbMovement(parentElement, nameModel);
+    new Thumb ('thumbOne').DefaultPosition(parentElement, nameModel);
   }
 }
 
