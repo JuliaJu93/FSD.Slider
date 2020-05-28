@@ -20,7 +20,6 @@ class Scale {
 // Ползунок
 class Thumb {
   constructor(name) {
-    this.name = name;
   }
   CreateThumb() {
     $(".scale").append($('<span class="thumb thumb_type_1" ></span>'));
@@ -33,7 +32,7 @@ class Thumb {
   }
   ThumbMovement() {
     $(".thumb").mousedown(function (){
-      $(document).mousemove(function (){
+      $(document).mousemove($.proxy(function (){
         let thumbDisplacement = 0;
         let direction = 0;
         if (inputsValue.positionHorizontal === true){
@@ -51,8 +50,8 @@ class Thumb {
         else if (thumbDisplacement <= positionContainerLeft){
           thumbDisplacement = positionContainerLeft;
         }
-        $(".thumb").css(direction, (thumbDisplacement - positionContainerLeft) +'px');
-      });
+        $(this).css(direction, (thumbDisplacement - positionContainerLeft) +'px');
+      }, this) );
       $(document).mouseup(function (){
         $(document).off("mousemove");
       });
@@ -60,9 +59,25 @@ class Thumb {
   }
 }
 
-new Scale ('horizontalScale').CreateScale();
-new Thumb ('thumbOne').CreateThumb();
-new Thumb ('thumbOne').ThumbMovement();
+class Slider {
+  constructor(name) {
+    this.name = name;
+  }
+  CreateSlider() {
+    new Scale ('horizontalScale').CreateScale();
+    if (inputsValue.oneThumb === true){
+      new Thumb ('thumbOne').CreateThumb();
+    }
+    else{
+      new Thumb ('thumbOne').CreateThumb();
+      new Thumb ('thumbTwo').CreateThumb();
+    }
+    new Thumb ('thumbOne').ThumbMovement();
+  }
+}
+
+new Slider ('SliderOne').CreateSlider();
+
 
 
 
