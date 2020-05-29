@@ -33,40 +33,72 @@ class Thumb {
   ThumbMovement(parentElement, nameModel) {
     $(parentElement).find(".thumb").mousedown(function (){
       $(document).mousemove($.proxy(function (){
-        //Задаем переменные необходимые для рассчета
-        let thumbDisplacement = 0;
-        let direction = 0;
-        let end = 0;
-        let start = 0;
-        //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
-        if (nameModel.positionHorizontal){
-          thumbDisplacement = event.clientX;
-          direction = 'left';
-        }
-        else {
-          thumbDisplacement = event.clientY;
-          direction = 'top';
-        }
-        console.log(thumbDisplacement)
+      //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
+       let thumbDisplacement = 0;
+       let direction = 0;
+       if (nameModel.positionHorizontal){
+         thumbDisplacement = event.movementX;
+         direction = 'left';
+       }
+       else {
+         thumbDisplacement = event.movementY;
+         direction = 'top';
+       }
+        //Задаем ограничения по движению ручек
         let positionContainer = $(parentElement).find(".scale").offset()[direction];
-        // Проверяем какая из ручек движется и в зависимости от этого задаем начало и конец траектории движения
+        let start = 0;
+        let end = 0;
         if (this === $(parentElement).find(".thumb:first-child")[0]){
-          end = $(parentElement).find(".thumb:last-child").offset()[direction];
-          start = positionContainer;
+          start = 0;
+          end = $(parentElement).find(".thumb:last-child").offset()[direction] - positionContainer - 16*1.35;
         }
         else{
-          end =  positionContainer + nameModel.sliderWidth;
-          start = $(parentElement).find(".thumb:first-child").offset()[direction] + 16*1.25;
+          start = $(parentElement).find(".thumb:first-child").offset()[direction] - positionContainer + 16*1.25;
+          end = inputsValue.sliderWidth - 16*1.35;
         }
-        //Ограничиваем движения ручек по шкале в зависимости от заданного начала и конца траектории
-        if (thumbDisplacement >= end  - 16*1.35){
-          thumbDisplacement = end  - 16*1.35;
+        //Проверяем, чтобы ручки не выходили за заданные границы
+        let coord = Number.parseInt(this.style[direction]);
+        if (coord + thumbDisplacement > start  && coord + thumbDisplacement < end){
+          // Двигаем ручки
+          this.style[direction] = coord + thumbDisplacement + 'px';
         }
-        else if (thumbDisplacement <= start){
-          thumbDisplacement = start;
-        }
-        //Двигаем ручки
-        $(this).css(direction, (thumbDisplacement - positionContainer +'px'));
+        
+        // this.style[direction] += thumbDisplacement;
+      
+      //   //Задаем переменные необходимые для рассчета
+      //   let thumbDisplacement = 0;
+      //   let direction = 0;
+      //   let end = 0;
+      //   let start = 0;
+      //   //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
+      //   if (nameModel.positionHorizontal){
+      //     thumbDisplacement = event.clientX;
+      //     direction = 'left';
+      //   }
+      //   else {
+      //     thumbDisplacement = event.clientY;
+      //     direction = 'top';
+      //   }
+      //   console.log(thumbDisplacement)
+      //   let positionContainer = $(parentElement).find(".scale").offset()[direction];
+      //   // Проверяем какая из ручек движется и в зависимости от этого задаем начало и конец траектории движения
+      //   if (this === $(parentElement).find(".thumb:first-child")[0]){
+      //     end = $(parentElement).find(".thumb:last-child").offset()[direction];
+      //     start = positionContainer;
+      //   }
+      //   else{
+      //     end =  positionContainer + nameModel.sliderWidth;
+      //     start = $(parentElement).find(".thumb:first-child").offset()[direction] + 16*1.25;
+      //   }
+      //   //Ограничиваем движения ручек по шкале в зависимости от заданного начала и конца траектории
+      //   if (thumbDisplacement >= end  - 16*1.35){
+      //     thumbDisplacement = end  - 16*1.35;
+      //   }
+      //   else if (thumbDisplacement <= start){
+      //     thumbDisplacement = start;
+      //   }
+      //   //Двигаем ручки
+      //   $(this).css(direction, (thumbDisplacement - positionContainer +'px'));
       }, this) );
       $(document).mouseup(function (){
         $(document).off("mousemove");

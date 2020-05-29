@@ -1,5 +1,5 @@
 export let inputsValue = {
-    sliderWidth: 270, // Ширина шкалы (пиксели)
+    sliderWidth: 280, // Ширина шкалы (пиксели)
     positionHorizontal: false, // Позиция шкалы (true - если горизонтальная, false - если вертикальная)
     minRange: 0, // Минимальное значение шкалы
     maxRange: 15000, // Максимальное значение шкалы
