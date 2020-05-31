@@ -8,7 +8,7 @@ class Scale {
   }
   CreateScale(parentElement, nameModel) {
     $(parentElement).append($('<div class="scale"></div>'));
-    if (nameModel.positionHorizontal === true){
+    if (nameModel.positionHorizontal){
       $(parentElement).find(".scale").css('width', nameModel.sliderWidth);
     }
     else {
@@ -17,19 +17,20 @@ class Scale {
   }
 }
 
-// Ползунок
+// Ручки
 class Thumb {
   constructor(name) {
   }
   CreateThumb(parentElement, nameModel) {
     $(parentElement).find(".scale").append($('<span class="thumb" ></span>'));
-    if (nameModel.positionHorizontal === true){
+    if (nameModel.positionHorizontal){
       $(parentElement).find(".thumb").css("bottom", ("-7px"));
     }
     else {
       $(parentElement).find(".thumb").css("left", ("-7px"));
     }
   }
+  // Процесс перемещение ручек
   ThumbMovement(parentElement, nameModel) {
     $(parentElement).find(".thumb").mousedown(function (){
       $(document).mousemove($.proxy(function (){
@@ -48,7 +49,13 @@ class Thumb {
         let positionContainer = $(parentElement).find(".scale").offset()[direction];
         let start = 0;
         let end = 0;
-        if (this === $(parentElement).find(".thumb:first-child")[0]){
+        //Ограничения для движения слайдера с одной ручкой
+        if (nameModel.oneThumb){
+          start = 0;
+          end = inputsValue.sliderWidth - 16*1.35;
+        }
+        //Ограничения для движения слайдера с двумя ручками
+        else if (this === $(parentElement).find(".thumb:first-child")[0]){
           start = 0;
           end = $(parentElement).find(".thumb:last-child").offset()[direction] - positionContainer - 16*1.35;
         }
@@ -59,46 +66,10 @@ class Thumb {
         //Проверяем, чтобы ручки не выходили за заданные границы
         let coord = Number.parseInt(this.style[direction]);
         if (coord + thumbDisplacement > start  && coord + thumbDisplacement < end){
-          // Двигаем ручки
+        // Двигаем ручки
           this.style[direction] = coord + thumbDisplacement + 'px';
+          new Interval ('interval').WidthInterval(parentElement, nameModel);
         }
-        
-        // this.style[direction] += thumbDisplacement;
-      
-      //   //Задаем переменные необходимые для рассчета
-      //   let thumbDisplacement = 0;
-      //   let direction = 0;
-      //   let end = 0;
-      //   let start = 0;
-      //   //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
-      //   if (nameModel.positionHorizontal){
-      //     thumbDisplacement = event.clientX;
-      //     direction = 'left';
-      //   }
-      //   else {
-      //     thumbDisplacement = event.clientY;
-      //     direction = 'top';
-      //   }
-      //   console.log(thumbDisplacement)
-      //   let positionContainer = $(parentElement).find(".scale").offset()[direction];
-      //   // Проверяем какая из ручек движется и в зависимости от этого задаем начало и конец траектории движения
-      //   if (this === $(parentElement).find(".thumb:first-child")[0]){
-      //     end = $(parentElement).find(".thumb:last-child").offset()[direction];
-      //     start = positionContainer;
-      //   }
-      //   else{
-      //     end =  positionContainer + nameModel.sliderWidth;
-      //     start = $(parentElement).find(".thumb:first-child").offset()[direction] + 16*1.25;
-      //   }
-      //   //Ограничиваем движения ручек по шкале в зависимости от заданного начала и конца траектории
-      //   if (thumbDisplacement >= end  - 16*1.35){
-      //     thumbDisplacement = end  - 16*1.35;
-      //   }
-      //   else if (thumbDisplacement <= start){
-      //     thumbDisplacement = start;
-      //   }
-      //   //Двигаем ручки
-      //   $(this).css(direction, (thumbDisplacement - positionContainer +'px'));
       }, this) );
       $(document).mouseup(function (){
         $(document).off("mousemove");
@@ -108,19 +79,68 @@ class Thumb {
   //Позиция ручек по умолчанию
   DefaultPosition(parentElement, nameModel){
     let direction = 0;
-    if (nameModel.positionHorizontal === true){
+    if (nameModel.positionHorizontal){
       direction = 'left';
     }
     else {
       direction = 'top';
     }
-    if (nameModel.oneThumb === true){
+    if (nameModel.oneThumb){
       $(parentElement).find(".thumb").css(direction, (nameModel.value + 'px'));
     }
     else{
       $(parentElement).find(".thumb:first-child").css(direction, (nameModel.values[0] + 'px'));
       $(parentElement).find(".thumb:last-child").css(direction, (nameModel.values[1] + 'px'));
     }
+  }
+}
+
+//Создание закрашенного интервала между двумя ручками интервального ползунка
+class Interval {
+  constructor(name) {
+    this.name = name;
+  }
+  CreateInterval(parentElement, nameModel) {
+    $(parentElement).find(".thumb:first-child").after($('<div class="interval"></div>'))
+    let direction = 0;
+    let margin = 0;
+    let size = 0;
+    if (nameModel.positionHorizontal){
+      direction = 'left';
+      margin = 'margin-left';
+      size = 'width';
+      $(parentElement).find(".interval").css('height', (100 + '%'));
+    }
+    else {
+      direction = 'top';
+      margin = 'margin-top';
+      size = 'height';
+      $(parentElement).find(".interval").css('width', (100 + '%'));
+    }
+    let width = nameModel.values[1] - nameModel.values[0];
+    $(parentElement).find(".interval").css(size, (width + 'px'));
+    $(parentElement).find(".interval").css(margin, (nameModel.values[0] + 'px'));
+  }
+  WidthInterval(parentElement, nameModel){
+    let direction = 0;
+    let margin = 0;
+    let size = 0;
+    if (nameModel.positionHorizontal){
+      direction = 'left';
+      margin = 'margin-left';
+      size = 'width';
+    }
+    else {
+      direction = 'top';
+      margin = 'margin-top';
+      size = 'height';
+    }
+    let positionContainer = $(parentElement).find(".scale").offset()[direction];
+    let thumbFirst = $(parentElement).find(".thumb:first-child").offset()[direction];
+    let thumbSecond = $(parentElement).find(".thumb:last-child").offset()[direction];
+    let width = thumbSecond - thumbFirst;
+    $(parentElement).find(".interval").css(margin, (thumbFirst - positionContainer + 'px'));
+    $(parentElement).find(".interval").css(size, (width + 'px'));
   }
 }
 
@@ -137,6 +157,7 @@ class Slider {
     else{
       new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
       new Thumb ('thumbTwo').CreateThumb(parentElement, nameModel);
+      new Interval ('interval').CreateInterval(parentElement, nameModel);
     }
     new Thumb ('thumbOne').ThumbMovement(parentElement, nameModel);
     new Thumb ('thumbOne').DefaultPosition(parentElement, nameModel);
