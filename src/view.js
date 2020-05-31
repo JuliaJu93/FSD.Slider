@@ -1,19 +1,70 @@
 import $ from 'jquery'
 import  {inputsValue, i} from './model.js'
 
+class Container {
+  constructor(name) {
+    this.name = name;
+  }
+  CreateContainer(parentElement, nameModel) {
+    $(parentElement).append($('<div class="containerOfSlider"></div>'));
+    let position = new Scale().ScalePosition(parentElement, nameModel);
+    $(parentElement).find(".containerOfSlider").css('flex-direction', position[4]);
+  }
+}
+
 //Создание Шкалы произвольной ширины, с возможностью изменять ее позитию (горизонтальная или вертикальная)
 class Scale {
   constructor(name) {
     this.name = name;
   }
   CreateScale(parentElement, nameModel) {
-    $(parentElement).append($('<div class="scale"></div>'));
+    $(parentElement).find(".containerOfSlider").append($('<div class="scale"></div>'));
+    let position = new Scale().ScalePosition(parentElement, nameModel);
+    $(parentElement).find(".scale").css(position[2], nameModel.sliderWidth);
+  }
+  ScalePosition(parentElement, nameModel) {
+    let direction,
+      margin,
+      size,
+      intervalPosition,
+      positionContent,
+      reversePosition;
     if (nameModel.positionHorizontal){
-      $(parentElement).find(".scale").css('width', nameModel.sliderWidth);
+      direction = 'left';
+      margin = 'margin-left';
+      size = 'width';
+      intervalPosition = $(parentElement).find(".interval").css('height', (100 + '%'));
+      positionContent = 'column';
+      reversePosition = 'row';
     }
     else {
-      $(parentElement).find(".scale").css('height', nameModel.sliderWidth);
-    } 
+      direction = 'top';
+      margin = 'margin-top';
+      size = 'height';
+      intervalPosition = $(parentElement).find(".interval").css('width', (100 + '%'));
+      positionContent = 'row';
+      reversePosition = 'column';
+    }
+    return ([direction, margin, size, intervalPosition, positionContent, reversePosition]);
+  }
+}
+
+class ScaleOfValues {
+  constructor(name) {
+    this.name = name;
+  }
+  CreateScaleOfValues(parentElement, nameModel) {
+    let position = new Scale().ScalePosition(parentElement, nameModel);
+    $(parentElement).find(".scale").after($('<div class="scaleOfValues"></div>'));
+    $(parentElement).find(".scaleOfValues").css(position[2], nameModel.sliderWidth);
+    $(parentElement).find(".scaleOfValues").css('flex-direction', position[5]);
+    $(parentElement).find(".scaleOfValues").append($('<p></p>'));
+    $(parentElement).find(".scaleOfValues").append($('<p></p>'));
+    if (position[4] === 'row'){
+      $(parentElement).find("p").css('margin', '0 1rem');
+    }
+    $(parentElement).find("p:first-child").text(nameModel.minRange);
+    $(parentElement).find("p:last-child").text(nameModel.maxRange);
   }
 }
 
@@ -78,19 +129,13 @@ class Thumb {
   }
   //Позиция ручек по умолчанию
   DefaultPosition(parentElement, nameModel){
-    let direction = 0;
-    if (nameModel.positionHorizontal){
-      direction = 'left';
-    }
-    else {
-      direction = 'top';
-    }
+    let position = new Scale().ScalePosition(parentElement, nameModel);
     if (nameModel.oneThumb){
-      $(parentElement).find(".thumb").css(direction, (nameModel.value + 'px'));
+      $(parentElement).find(".thumb").css(position[0], (nameModel.value + 'px'));
     }
     else{
-      $(parentElement).find(".thumb:first-child").css(direction, (nameModel.values[0] + 'px'));
-      $(parentElement).find(".thumb:last-child").css(direction, (nameModel.values[1] + 'px'));
+      $(parentElement).find(".thumb:first-child").css(position[0], (nameModel.values[0] + 'px'));
+      $(parentElement).find(".thumb:last-child").css(position[0], (nameModel.values[1] + 'px'));
     }
   }
 }
@@ -102,45 +147,19 @@ class Interval {
   }
   CreateInterval(parentElement, nameModel) {
     $(parentElement).find(".thumb:first-child").after($('<div class="interval"></div>'))
-    let direction = 0;
-    let margin = 0;
-    let size = 0;
-    if (nameModel.positionHorizontal){
-      direction = 'left';
-      margin = 'margin-left';
-      size = 'width';
-      $(parentElement).find(".interval").css('height', (100 + '%'));
-    }
-    else {
-      direction = 'top';
-      margin = 'margin-top';
-      size = 'height';
-      $(parentElement).find(".interval").css('width', (100 + '%'));
-    }
+    let position = new Scale().ScalePosition(parentElement, nameModel);
     let width = nameModel.values[1] - nameModel.values[0];
-    $(parentElement).find(".interval").css(size, (width + 'px'));
-    $(parentElement).find(".interval").css(margin, (nameModel.values[0] + 'px'));
+    $(parentElement).find(".interval").css(position[2], (width + 'px'));
+    $(parentElement).find(".interval").css(position[1], (nameModel.values[0] + 'px'));
   }
   WidthInterval(parentElement, nameModel){
-    let direction = 0;
-    let margin = 0;
-    let size = 0;
-    if (nameModel.positionHorizontal){
-      direction = 'left';
-      margin = 'margin-left';
-      size = 'width';
-    }
-    else {
-      direction = 'top';
-      margin = 'margin-top';
-      size = 'height';
-    }
-    let positionContainer = $(parentElement).find(".scale").offset()[direction];
-    let thumbFirst = $(parentElement).find(".thumb:first-child").offset()[direction];
-    let thumbSecond = $(parentElement).find(".thumb:last-child").offset()[direction];
+    let position = new Scale().ScalePosition(parentElement, nameModel);
+    let positionContainer = $(parentElement).find(".scale").offset()[position[0]];
+    let thumbFirst = $(parentElement).find(".thumb:first-child").offset()[position[0]];
+    let thumbSecond = $(parentElement).find(".thumb:last-child").offset()[position[0]];
     let width = thumbSecond - thumbFirst;
-    $(parentElement).find(".interval").css(margin, (thumbFirst - positionContainer + 'px'));
-    $(parentElement).find(".interval").css(size, (width + 'px'));
+    $(parentElement).find(".interval").css(position[1], (thumbFirst - positionContainer + 'px'));
+    $(parentElement).find(".interval").css(position[2], (width + 'px'));
   }
 }
 
@@ -150,8 +169,10 @@ class Slider {
     this.name = name;
   }
   CreateSlider(nameScale, parentElement, nameModel) {
+    new Container ('container').CreateContainer(parentElement, nameModel);
     new Scale (nameScale).CreateScale(parentElement, nameModel);
-    if (nameModel.oneThumb === true){
+    new ScaleOfValues (nameScale).CreateScaleOfValues(parentElement, nameModel);
+    if (nameModel.oneThumb){
       new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
     }
     else{

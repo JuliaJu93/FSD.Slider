@@ -5,12 +5,21 @@
     margin: 100px;
 }
 
+.containerOfSlider{
+    display: flex;
+}
+
 .scale{
     border: 1px solid #6FCF97;
     width: 6px;
     height: 6px;
     border-radius: 5px;
     position: relative;
+}
+
+.scaleOfValues{
+    display: flex;
+    justify-content: space-between;
 }
 
 .thumb{
@@ -28,6 +37,8 @@
     pointer-events: none;
     background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
 }
+
+
 
 
 
