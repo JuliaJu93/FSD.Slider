@@ -33,6 +33,18 @@
     width: 16px;
 }
 
+.containerElementText{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.elementText{
+    position: absolute;
+    margin: 0;
+    font-size: 12px;
+}
+
 .interval{
     pointer-events: none;
     background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);

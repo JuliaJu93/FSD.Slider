@@ -7,7 +7,7 @@ class Container {
   }
   CreateContainer(parentElement, nameModel) {
     $(parentElement).append($('<div class="containerOfSlider"></div>'));
-    let position = new Scale().ScalePosition(parentElement, nameModel);
+    const position = new Scale().ScalePosition(parentElement, nameModel);
     $(parentElement).find(".containerOfSlider").css('flex-direction', position[4]);
   }
 }
@@ -19,8 +19,8 @@ class Scale {
   }
   CreateScale(parentElement, nameModel) {
     $(parentElement).find(".containerOfSlider").append($('<div class="scale"></div>'));
-    let position = new Scale().ScalePosition(parentElement, nameModel);
-    $(parentElement).find(".scale").css(position[2], nameModel.sliderWidth + 16*1.35);
+    const position = new Scale().ScalePosition(parentElement, nameModel);
+    $(parentElement).find(".scale").css(position[2], nameModel.sliderWidth + 16);
   }
   ScalePosition(parentElement, nameModel) {
     let direction,
@@ -28,7 +28,8 @@ class Scale {
       size,
       intervalPosition,
       positionContent,
-      reversePosition;
+      reversePosition,
+      reverseSize;
     if (nameModel.positionHorizontal){
       direction = 'left';
       margin = 'margin-left';
@@ -36,6 +37,7 @@ class Scale {
       intervalPosition = $(parentElement).find(".interval").css('height', (100 + '%'));
       positionContent = 'column';
       reversePosition = 'row';
+      reverseSize = 'height';
     }
     else {
       direction = 'top';
@@ -44,8 +46,9 @@ class Scale {
       intervalPosition = $(parentElement).find(".interval").css('width', (100 + '%'));
       positionContent = 'row';
       reversePosition = 'column';
+      reverseSize = 'width';
     }
-    return ([direction, margin, size, intervalPosition, positionContent, reversePosition]);
+    return ([direction, margin, size, intervalPosition, positionContent, reversePosition, reverseSize]);
   }
 }
 
@@ -54,7 +57,7 @@ class ScaleOfValues {
     this.name = name;
   }
   CreateScaleOfValues(parentElement, nameModel) {
-    let position = new Scale().ScalePosition(parentElement, nameModel);
+    const position = new Scale().ScalePosition(parentElement, nameModel);
     $(parentElement).find(".scale").after($('<div class="scaleOfValues"></div>'));
     $(parentElement).find(".scaleOfValues").css(position[2], nameModel.sliderWidth + 16*1.35);
     $(parentElement).find(".scaleOfValues").css('flex-direction', position[5]);
@@ -65,6 +68,55 @@ class ScaleOfValues {
     }
     $(parentElement).find("p:first-child").text(nameModel.minRange);
     $(parentElement).find("p:last-child").text(nameModel.maxRange);
+  }
+}
+
+//Значение над ручками
+class ElementText {
+  constructor(name) {
+    this.name = name;
+  }
+  CreateContainerElementText(parentElement, nameModel) {
+    const position = new Scale().ScalePosition(parentElement, nameModel);
+    $(parentElement).find(".containerOfSlider").prepend($('<div class="containerElementText"></div>'));
+    $(parentElement).find(".containerElementText").css(position[2], (nameModel.sliderWidth + 16*1.35 + 'px'));
+    $(parentElement).find(".containerElementText").css(position[6], (40 + 'px'));
+  }
+  CreateElementText(parentElement, nameModel) {
+    if (nameModel.oneThumb){
+    $(parentElement).find(".containerElementText").append($('<p class="elementText"></p>'));
+    $(parentElement).find(".containerElementText p").text(nameModel.value);
+    }
+    else{
+      $(parentElement).find(".containerElementText").append($('<p class="elementText"></p>'));
+      $(parentElement).find(".containerElementText").append($('<p class="elementText"></p>'));
+      $(parentElement).find(".containerElementText p:first-child").text(nameModel.values[0]);
+      $(parentElement).find(".containerElementText p:last-child").text(nameModel.values[1]);
+    }
+    new ElementText ('element').СhangePositionElement(parentElement, nameModel);
+  }
+  СhangePositionElement(parentElement, nameModel){
+    const position = new Scale().ScalePosition(parentElement, nameModel);
+    const positionContainer = $(parentElement).find(".scale").offset()[position[0]];
+    let elementFirst = $(parentElement).find(".thumb:first-child").offset()[position[0]];
+    let elementSecond = $(parentElement).find(".thumb:last-child").offset()[position[0]];
+    $(parentElement).find(".elementText:first-child").css(position[0], (elementFirst - positionContainer - 16 + 'px'));
+    $(parentElement).find(".elementText:last-child").css(position[0], (elementSecond - positionContainer + 16 + 'px'));
+  }
+  СhangeValueElement(parentElement, nameModel, thumb){
+    const position = new Scale().ScalePosition(parentElement, nameModel);
+    const positionContainer = $(parentElement).find(".scale").offset()[position[0]];
+    const elementFirst = ($(parentElement).find(".thumb:first-child").offset()[position[0]]) - positionContainer;
+    const elementSecond = ($(parentElement).find(".thumb:last-child").offset()[position[0]]) - positionContainer;
+    let value;
+    if (thumb === $(parentElement).find(".thumb:first-child")[0]){
+      value = Math.round((nameModel.maxRange - nameModel.minRange) * elementFirst/nameModel.sliderWidth);
+      $(parentElement).find(".containerElementText p:first-child").text(value);
+    }
+    else{
+      value = Math.round((nameModel.maxRange - nameModel.minRange) * elementSecond /nameModel.sliderWidth);
+      $(parentElement).find(".containerElementText p:last-child").text(value);
+    }
   }
 }
 
@@ -97,13 +149,13 @@ class Thumb {
          direction = 'top';
        }
         //Задаем ограничения по движению ручек
-        let positionContainer = $(parentElement).find(".scale").offset()[direction];
+        const positionContainer = $(parentElement).find(".scale").offset()[direction];
         let start = 0;
         let end = 0;
         //Ограничения для движения слайдера с одной ручкой
         if (nameModel.oneThumb){
           start = 0;
-          end = inputsValue.sliderWidth;
+          end = nameModel.sliderWidth;
         }
         //Ограничения для движения слайдера с двумя ручками
         else if (this === $(parentElement).find(".thumb:first-child")[0]){
@@ -115,11 +167,14 @@ class Thumb {
           end = inputsValue.sliderWidth;
         }
         //Проверяем, чтобы ручки не выходили за заданные границы
-        let coord = Number.parseInt(this.style[direction]);
-        if (coord + thumbDisplacement > start  && coord + thumbDisplacement < end){
+        const coord = Number.parseInt(this.style[direction]);
+        if (coord + thumbDisplacement >= start-1  && coord + thumbDisplacement < end){
         // Двигаем ручки
           this.style[direction] = coord + thumbDisplacement + 'px';
+          const thumb = this;
           new Interval ('interval').WidthInterval(parentElement, nameModel);
+          new ElementText ('element').СhangePositionElement(parentElement, nameModel);
+          new ElementText ('element').СhangeValueElement(parentElement, nameModel, thumb);
         }
       }, this) );
       $(document).mouseup(function (){
@@ -129,17 +184,18 @@ class Thumb {
   }
   //Позиция ручек по умолчанию
   DefaultPosition(parentElement, nameModel){
-    let position = new Scale().ScalePosition(parentElement, nameModel);
+    const position = new Scale().ScalePosition(parentElement, nameModel);
+    let recalculation;
     if (nameModel.oneThumb){
       //Пересчитываем заданное в модели значение на пиксели
-      let recalculation = (nameModel.sliderWidth * nameModel.value)/(nameModel.maxRange - nameModel.minRange);
+      recalculation = (nameModel.sliderWidth * nameModel.value)/(nameModel.maxRange - nameModel.minRange);
       $(parentElement).find(".thumb").css(position[0], (recalculation + 'px'));
     }
     else{
-      let recalculation = [];
-      recalculation[0] = (nameModel.sliderWidth * nameModel.values[0])/(nameModel.maxRange - nameModel.minRange);
+      recalculation = [];
+      recalculation[0] = Math.round((nameModel.sliderWidth * nameModel.values[0])/(nameModel.maxRange - nameModel.minRange));
       $(parentElement).find(".thumb:first-child").css(position[0], (recalculation[0] + 'px'));
-      recalculation[1] = (nameModel.sliderWidth * nameModel.values[1])/(nameModel.maxRange - nameModel.minRange);
+      recalculation[1] = Math.round((nameModel.sliderWidth * nameModel.values[1])/(nameModel.maxRange - nameModel.minRange));
       $(parentElement).find(".thumb:last-child").css(position[0], (recalculation[1] + 'px'));
       return recalculation;
     }
@@ -153,18 +209,18 @@ class Interval {
   }
   CreateInterval(parentElement, nameModel) {
     $(parentElement).find(".thumb:first-child").after($('<div class="interval"></div>'))
-    let position = new Scale().ScalePosition(parentElement, nameModel);
-    let defaultPosition = new Thumb ('thumbOne').DefaultPosition(parentElement, nameModel);
-    let width = defaultPosition[1] - defaultPosition[0];
+    const position = new Scale().ScalePosition(parentElement, nameModel);
+    const defaultPosition = new Thumb ('thumbOne').DefaultPosition(parentElement, nameModel);
+    const width = defaultPosition[1] - defaultPosition[0];
     $(parentElement).find(".interval").css(position[2], (width + 'px'));
     $(parentElement).find(".interval").css(position[1], (defaultPosition[0] + 'px'));
   }
   WidthInterval(parentElement, nameModel){
-    let position = new Scale().ScalePosition(parentElement, nameModel);
-    let positionContainer = $(parentElement).find(".scale").offset()[position[0]];
-    let thumbFirst = $(parentElement).find(".thumb:first-child").offset()[position[0]];
-    let thumbSecond = $(parentElement).find(".thumb:last-child").offset()[position[0]];
-    let width = thumbSecond - thumbFirst;
+    const position = new Scale().ScalePosition(parentElement, nameModel);
+    const positionContainer = $(parentElement).find(".scale").offset()[position[0]];
+    const thumbFirst = $(parentElement).find(".thumb:first-child").offset()[position[0]];
+    const thumbSecond = $(parentElement).find(".thumb:last-child").offset()[position[0]];
+    const width = thumbSecond - thumbFirst;
     $(parentElement).find(".interval").css(position[1], (thumbFirst - positionContainer + 'px'));
     $(parentElement).find(".interval").css(position[2], (width + 'px'));
   }
@@ -181,11 +237,19 @@ class Slider {
     new ScaleOfValues (nameScale).CreateScaleOfValues(parentElement, nameModel);
     if (nameModel.oneThumb){
       new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
+      if(nameModel.elementText){
+        new ElementText ('containerElement').CreateContainerElementText(parentElement, nameModel);
+        new ElementText ('element').CreateElementText(parentElement, nameModel);
+      }
     }
     else{
       new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
       new Thumb ('thumbTwo').CreateThumb(parentElement, nameModel);
       new Interval ('interval').CreateInterval(parentElement, nameModel);
+      if(nameModel.elementText){
+        new ElementText ('containerElement').CreateContainerElementText(parentElement, nameModel);
+        new ElementText ('element').CreateElementText(parentElement, nameModel);
+      }
     }
     new Thumb ('thumbOne').ThumbMovement(parentElement, nameModel);
     new Thumb ('thumbOne').DefaultPosition(parentElement, nameModel);
@@ -197,96 +261,4 @@ new Slider ('Slidertwo').CreateSlider('jScale', ".containerSlider2", i);
 new Slider ('Slidervv').CreateSlider('jSxccc', ".containerSlider3", inputsValue);
 
 
-// import  {inputsValue} from './model.js'
 
-// let range = inputsValue.maxRange - inputsValue.minRange;
-// let rangeK = inputsValue.sliderWidth / range;
-// let thumbRealWidth = inputsValue.thumbWidth + 2 * inputsValue.thumbBorderWidth;
-
-// let slider = document.querySelector(".containerSlider__slider");
-// slider.style.height = inputsValue.trackHeight + "px"; 
-// slider.style.width = inputsValue.sliderWidth + "px";
-// slider.style.paddingLeft = (inputsValue.theValue[0] - inputsValue.minRange) * rangeK + "px";
-// slider.style.paddingRight = inputsValue.sliderWidth - inputsValue.theValue[1] * rangeK + "px";
-
-// let track = document.querySelector(".track");
-// track.style.width = inputsValue.theValue[1] * rangeK - inputsValue.theValue[0] * rangeK + "px";
-
-// let thumbs = document.querySelectorAll(".thumb");
-// for (let i = 0; i < thumbs.length; i++) {
-
-//   thumbs[i].style.width = thumbs[i].style.height = inputsValue.thumbWidth + "px";
-//   thumbs[i].style.borderWidth = inputsValue.thumbBorderWidth + "px";
-//   thumbs[i].style.top = -(inputsValue.thumbWidth / 2 + inputsValue.thumbBorderWidth - inputsValue.trackHeight / 2) + "px";
-//   thumbs[i].style.left = (inputsValue.theValue[i] - inputsValue.minRange) * rangeK - (thumbRealWidth / 2) + "px";
-
-// }
-// let outputs = document.querySelectorAll(".output");
-// for (let i = 0; i < outputs.length; i++) {
-//   outputs[i].style.width = outputs[i].style.height = outputs[i].style.lineHeight = outputs[i].style.left = inputsValue.outputWidth + "px";
-//   outputs[i].style.top = -(Math.sqrt(2 * inputsValue.outputWidth * inputsValue.outputWidth) + inputsValue.thumbWidth / 2 - inputsValue.trackHeight / 2) + "px";
-//   outputs[i].style.left = (inputsValue.theValue[i] - inputsValue.minRange) * rangeK - inputsValue.outputWidth / 2 + "px";
-//   outputs[i].innerHTML = "<p>" + inputsValue.theValue[i] +'₽' + "</p>";
-// }
-
-// let isDragging0 = false;
-// let isDragging1 = false;
-
-// let container = document.querySelector(".containerSlider");
-
-// //events
-
-// thumbs[0].addEventListener("mousedown", function(evt) {
-//   isDragging0 = true;
-// }, false);
-// thumbs[1].addEventListener("mousedown", function(evt) {
-//   isDragging1 = true;
-// }, false);
-// container.addEventListener("mouseup", function(evt) {
-//   isDragging0 = false;
-//   isDragging1 = false;
-// }, false);
-// container.addEventListener("mouseout", function(evt) {
-//   isDragging0 = false;
-//   isDragging1 = false;
-// }, false);
-
-// container.addEventListener("mousemove", function(evt) {
-//   let mousePos = oMousePos(this, evt);
-//   let theValue0 = (isDragging0) ? Math.round(mousePos.x / rangeK) + inputsValue.minRange : inputsValue.theValue[0];
-//   let theValue1 = (isDragging1) ? Math.round(mousePos.x / rangeK) + inputsValue.minRange : inputsValue.theValue[1];
-
-//   if (isDragging0) {
-
-//     if (theValue0 < theValue1 - (thumbRealWidth / 2) &&
-//       theValue0 >= inputsValue.minRange) {
-//       inputsValue.theValue[0] = theValue0;
-//       thumbs[0].style.left = (theValue0 - inputsValue.minRange) * rangeK - (thumbRealWidth / 2) + "px";
-//       outputs[0].style.left = (theValue0 - inputsValue.minRange) * rangeK - inputsValue.outputWidth / 2 + "px";
-//       outputs[0].innerHTML = "<p>" + theValue0 + '₽' + "</p>";
-//       slider.style.paddingLeft = (theValue0 - inputsValue.minRange) * rangeK + "px";
-//       track.style.width = (theValue1 - theValue0) * rangeK + "px";
-
-//     }
-//   } else if (isDragging1) {
-
-//     if (theValue1 > theValue0 + (thumbRealWidth / 2) &&
-//       theValue1 <= inputsValue.maxRange) {
-//       inputsValue.theValue[1] = theValue1;
-//       thumbs[1].style.left = (theValue1 - inputsValue.minRange) * rangeK - (thumbRealWidth / 2) + "px";
-//       outputs[1].style.left = (theValue1 - inputsValue.minRange) * rangeK - inputsValue.outputWidth / 2 + "px";
-//       outputs[1].innerHTML = "<p>" + theValue1 + '₽' + "</p>";
-//       slider.style.paddingRight = (inputsValue.maxRange - theValue1) * rangeK + "px";
-//       track.style.width = (theValue1 - theValue0) * rangeK + "px";
-//     }
-//   }
-
-// }, false);
-
-// function oMousePos(elmt, evt) {
-//   let ClientRect = elmt.getBoundingClientRect();
-//   return { 
-//     x: Math.round(evt.clientX - ClientRect.left),
-//     y: Math.round(evt.clientY - ClientRect.top)
-//   }
-// }
