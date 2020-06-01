@@ -12,7 +12,7 @@ class Container {
   }
 }
 
-//Создание Шкалы произвольной ширины, с возможностью изменять ее позитию (горизонтальная или вертикальная)
+//Создание Шкалы произвольной ширины, с возможностью изменять ее позицию (горизонтальная или вертикальная)
 class Scale {
   constructor(name) {
     this.name = name;
@@ -20,7 +20,7 @@ class Scale {
   CreateScale(parentElement, nameModel) {
     $(parentElement).find(".containerOfSlider").append($('<div class="scale"></div>'));
     let position = new Scale().ScalePosition(parentElement, nameModel);
-    $(parentElement).find(".scale").css(position[2], nameModel.sliderWidth);
+    $(parentElement).find(".scale").css(position[2], nameModel.sliderWidth + 16*1.35);
   }
   ScalePosition(parentElement, nameModel) {
     let direction,
@@ -56,7 +56,7 @@ class ScaleOfValues {
   CreateScaleOfValues(parentElement, nameModel) {
     let position = new Scale().ScalePosition(parentElement, nameModel);
     $(parentElement).find(".scale").after($('<div class="scaleOfValues"></div>'));
-    $(parentElement).find(".scaleOfValues").css(position[2], nameModel.sliderWidth);
+    $(parentElement).find(".scaleOfValues").css(position[2], nameModel.sliderWidth + 16*1.35);
     $(parentElement).find(".scaleOfValues").css('flex-direction', position[5]);
     $(parentElement).find(".scaleOfValues").append($('<p></p>'));
     $(parentElement).find(".scaleOfValues").append($('<p></p>'));
@@ -81,7 +81,7 @@ class Thumb {
       $(parentElement).find(".thumb").css("left", ("-7px"));
     }
   }
-  // Процесс перемещение ручек
+  // Процесс перемещения ручек
   ThumbMovement(parentElement, nameModel) {
     $(parentElement).find(".thumb").mousedown(function (){
       $(document).mousemove($.proxy(function (){
@@ -103,7 +103,7 @@ class Thumb {
         //Ограничения для движения слайдера с одной ручкой
         if (nameModel.oneThumb){
           start = 0;
-          end = inputsValue.sliderWidth - 16*1.35;
+          end = inputsValue.sliderWidth;
         }
         //Ограничения для движения слайдера с двумя ручками
         else if (this === $(parentElement).find(".thumb:first-child")[0]){
@@ -112,7 +112,7 @@ class Thumb {
         }
         else{
           start = $(parentElement).find(".thumb:first-child").offset()[direction] - positionContainer + 16*1.25;
-          end = inputsValue.sliderWidth - 16*1.35;
+          end = inputsValue.sliderWidth;
         }
         //Проверяем, чтобы ручки не выходили за заданные границы
         let coord = Number.parseInt(this.style[direction]);
@@ -131,11 +131,17 @@ class Thumb {
   DefaultPosition(parentElement, nameModel){
     let position = new Scale().ScalePosition(parentElement, nameModel);
     if (nameModel.oneThumb){
-      $(parentElement).find(".thumb").css(position[0], (nameModel.value + 'px'));
+      //Пересчитываем заданное в модели значение на пиксели
+      let recalculation = (nameModel.sliderWidth * nameModel.value)/(nameModel.maxRange - nameModel.minRange);
+      $(parentElement).find(".thumb").css(position[0], (recalculation + 'px'));
     }
     else{
-      $(parentElement).find(".thumb:first-child").css(position[0], (nameModel.values[0] + 'px'));
-      $(parentElement).find(".thumb:last-child").css(position[0], (nameModel.values[1] + 'px'));
+      let recalculation = [];
+      recalculation[0] = (nameModel.sliderWidth * nameModel.values[0])/(nameModel.maxRange - nameModel.minRange);
+      $(parentElement).find(".thumb:first-child").css(position[0], (recalculation[0] + 'px'));
+      recalculation[1] = (nameModel.sliderWidth * nameModel.values[1])/(nameModel.maxRange - nameModel.minRange);
+      $(parentElement).find(".thumb:last-child").css(position[0], (recalculation[1] + 'px'));
+      return recalculation;
     }
   }
 }
@@ -148,9 +154,10 @@ class Interval {
   CreateInterval(parentElement, nameModel) {
     $(parentElement).find(".thumb:first-child").after($('<div class="interval"></div>'))
     let position = new Scale().ScalePosition(parentElement, nameModel);
-    let width = nameModel.values[1] - nameModel.values[0];
+    let defaultPosition = new Thumb ('thumbOne').DefaultPosition(parentElement, nameModel);
+    let width = defaultPosition[1] - defaultPosition[0];
     $(parentElement).find(".interval").css(position[2], (width + 'px'));
-    $(parentElement).find(".interval").css(position[1], (nameModel.values[0] + 'px'));
+    $(parentElement).find(".interval").css(position[1], (defaultPosition[0] + 'px'));
   }
   WidthInterval(parentElement, nameModel){
     let position = new Scale().ScalePosition(parentElement, nameModel);
