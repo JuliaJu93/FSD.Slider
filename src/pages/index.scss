@@ -33,6 +33,13 @@
     width: 16px;
 }
 
+.thumb:after{
+    position: absolute;
+    content: attr(data-element);
+    font-size: 13px;
+    bottom: 1rem;
+}
+
 .containerElementText{
     position: relative;
     display: flex;

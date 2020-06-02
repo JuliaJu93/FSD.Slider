@@ -22,6 +22,7 @@ class Scale {
     const position = new Scale().ScalePosition(parentElement, nameModel);
     $(parentElement).find(".scale").css(position[2], nameModel.sliderWidth + 16);
   }
+  // Параметры, которые зависят от положения шкалы
   ScalePosition(parentElement, nameModel) {
     let direction,
       margin,
@@ -52,6 +53,7 @@ class Scale {
   }
 }
 
+// Шкала со значениями под ползунком
 class ScaleOfValues {
   constructor(name) {
     this.name = name;
@@ -76,46 +78,38 @@ class ElementText {
   constructor(name) {
     this.name = name;
   }
-  CreateContainerElementText(parentElement, nameModel) {
-    const position = new Scale().ScalePosition(parentElement, nameModel);
-    $(parentElement).find(".containerOfSlider").prepend($('<div class="containerElementText"></div>'));
-    $(parentElement).find(".containerElementText").css(position[2], (nameModel.sliderWidth + 16*1.35 + 'px'));
-    $(parentElement).find(".containerElementText").css(position[6], (40 + 'px'));
-  }
   CreateElementText(parentElement, nameModel) {
-    if (nameModel.oneThumb){
-    $(parentElement).find(".containerElementText").append($('<p class="elementText"></p>'));
-    $(parentElement).find(".containerElementText p").text(nameModel.value);
+    const elementFirst = $(parentElement).find(".thumb:first-child")[0];
+    const elementSecond = $(parentElement).find(".thumb:last-child")[0];
+    if(nameModel.oneThumb){
+      elementFirst.dataset.element = nameModel.value;
     }
     else{
-      $(parentElement).find(".containerElementText").append($('<p class="elementText"></p>'));
-      $(parentElement).find(".containerElementText").append($('<p class="elementText"></p>'));
-      $(parentElement).find(".containerElementText p:first-child").text(nameModel.values[0]);
-      $(parentElement).find(".containerElementText p:last-child").text(nameModel.values[1]);
+      elementFirst.dataset.element = nameModel.values[0];
+      elementSecond.dataset.element = nameModel.values[1];
     }
-    new ElementText ('element').СhangePositionElement(parentElement, nameModel);
-  }
-  СhangePositionElement(parentElement, nameModel){
-    const position = new Scale().ScalePosition(parentElement, nameModel);
-    const positionContainer = $(parentElement).find(".scale").offset()[position[0]];
-    let elementFirst = $(parentElement).find(".thumb:first-child").offset()[position[0]];
-    let elementSecond = $(parentElement).find(".thumb:last-child").offset()[position[0]];
-    $(parentElement).find(".elementText:first-child").css(position[0], (elementFirst - positionContainer - 16 + 'px'));
-    $(parentElement).find(".elementText:last-child").css(position[0], (elementSecond - positionContainer + 16 + 'px'));
   }
   СhangeValueElement(parentElement, nameModel, thumb){
     const position = new Scale().ScalePosition(parentElement, nameModel);
+    const elementFirst = $(parentElement).find(".thumb:first-child")[0];
+    const elementSecond = $(parentElement).find(".thumb:last-child")[0];
     const positionContainer = $(parentElement).find(".scale").offset()[position[0]];
-    const elementFirst = ($(parentElement).find(".thumb:first-child").offset()[position[0]]) - positionContainer;
-    const elementSecond = ($(parentElement).find(".thumb:last-child").offset()[position[0]]) - positionContainer;
+    const elementFirstPosition = ($(parentElement).find(".thumb:first-child").offset()[position[0]]) - positionContainer;
+    const elementSecondPosition = ($(parentElement).find(".thumb:last-child").offset()[position[0]]) - positionContainer;
     let value;
-    if (thumb === $(parentElement).find(".thumb:first-child")[0]){
-      value = Math.round((nameModel.maxRange - nameModel.minRange) * elementFirst/nameModel.sliderWidth);
-      $(parentElement).find(".containerElementText p:first-child").text(value);
+    if(nameModel.oneThumb){
+      value = Math.round((nameModel.maxRange - nameModel.minRange) * elementFirstPosition/nameModel.sliderWidth);
+      elementFirst.dataset.element = value;
     }
     else{
-      value = Math.round((nameModel.maxRange - nameModel.minRange) * elementSecond /nameModel.sliderWidth);
-      $(parentElement).find(".containerElementText p:last-child").text(value);
+      if (thumb === elementFirst){
+      value = Math.round((nameModel.maxRange - nameModel.minRange) * elementFirstPosition/nameModel.sliderWidth);
+      elementFirst.dataset.element = value;
+      }
+      else{
+        value = Math.round((nameModel.maxRange - nameModel.minRange) * elementSecondPosition/nameModel.sliderWidth);
+        elementSecond.dataset.element = value;
+      }
     }
   }
 }
@@ -164,7 +158,7 @@ class Thumb {
         }
         else{
           start = $(parentElement).find(".thumb:first-child").offset()[direction] - positionContainer + 16*1.25;
-          end = inputsValue.sliderWidth;
+          end = nameModel.sliderWidth;
         }
         //Проверяем, чтобы ручки не выходили за заданные границы
         const coord = Number.parseInt(this.style[direction]);
@@ -172,9 +166,9 @@ class Thumb {
         // Двигаем ручки
           this.style[direction] = coord + thumbDisplacement + 'px';
           const thumb = this;
+          console.log(end, coord + thumbDisplacement)
           new Interval ('interval').WidthInterval(parentElement, nameModel);
-          new ElementText ('element').СhangePositionElement(parentElement, nameModel);
-          new ElementText ('element').СhangeValueElement(parentElement, nameModel, thumb);
+          new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb);
         }
       }, this) );
       $(document).mouseup(function (){
@@ -235,21 +229,16 @@ class Slider {
     new Container ('container').CreateContainer(parentElement, nameModel);
     new Scale (nameScale).CreateScale(parentElement, nameModel);
     new ScaleOfValues (nameScale).CreateScaleOfValues(parentElement, nameModel);
-    if (nameModel.oneThumb){
-      new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
-      if(nameModel.elementText){
-        new ElementText ('containerElement').CreateContainerElementText(parentElement, nameModel);
-        new ElementText ('element').CreateElementText(parentElement, nameModel);
+    if (nameModel.elementText){
+      if (nameModel.oneThumb){
+        new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
       }
-    }
-    else{
-      new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
-      new Thumb ('thumbTwo').CreateThumb(parentElement, nameModel);
-      new Interval ('interval').CreateInterval(parentElement, nameModel);
-      if(nameModel.elementText){
-        new ElementText ('containerElement').CreateContainerElementText(parentElement, nameModel);
-        new ElementText ('element').CreateElementText(parentElement, nameModel);
+      else{
+        new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
+        new Thumb ('thumbTwo').CreateThumb(parentElement, nameModel);
+        new Interval ('interval').CreateInterval(parentElement, nameModel);
       }
+      new ElementText ('element').CreateElementText(parentElement, nameModel);
     }
     new Thumb ('thumbOne').ThumbMovement(parentElement, nameModel);
     new Thumb ('thumbOne').DefaultPosition(parentElement, nameModel);
