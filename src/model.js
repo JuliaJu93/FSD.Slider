@@ -30,46 +30,49 @@ class ControlPanel {
       this.name = name;
     }
     CreateControlPanel(parentElement, nameModel) {
+        const parentId =  $(parentElement).attr('id');
+        console.log(parentId)
+
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:first-child").append($('<label for="position"></label>'));
+        $(parentElement).find(".containerRow:first-child").append($(`<label for='position-${parentId}'></label>`));
         $(parentElement).find(".containerRow:first-child label").text('Position horizontal');
-        $(parentElement).find(".containerRow:first-child ").append($('<input type=checkbox id="position"></input>'));
+        $(parentElement).find(".containerRow:first-child ").append($(`<input type=checkbox id='position-${parentId}'></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:nth-child(2)").append($('<label for="min"></label>'));
+        $(parentElement).find(".containerRow:nth-child(2)").append($(`<label for="min-${parentId}"></label>`));
         $(parentElement).find(".containerRow:nth-child(2) label").text('Minimum value');
-        $(parentElement).find(".containerRow:nth-child(2)").append($('<input id="min" type=number value=0 min=0></input>'));
+        $(parentElement).find(".containerRow:nth-child(2)").append($(`<input id="min-${parentId}" type=number value=0 min=0></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:nth-child(3)").append($('<label for="max"></label>'));
+        $(parentElement).find(".containerRow:nth-child(3)").append($(`<label for="max-${parentId}"></label>`));
         $(parentElement).find(".containerRow:nth-child(3) label").text('Maximum value');
-        $(parentElement).find(".containerRow:nth-child(3)").append($('<input id="max" type=number value=0 min=0></input>'));
+        $(parentElement).find(".containerRow:nth-child(3)").append($(`<input id="max-${parentId}" type=number value=0 min=0></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:nth-child(4)").append($('<label for="thumb"></label>'));
+        $(parentElement).find(".containerRow:nth-child(4)").append($(`<label for="thumb-${parentId}"></label>`));
         $(parentElement).find(".containerRow:nth-child(4) label").text('One thumb');
-        $(parentElement).find(".containerRow:nth-child(4)").append($('<input id="thumb" type=checkbox></input>'));
+        $(parentElement).find(".containerRow:nth-child(4)").append($(`<input id="thumb-${parentId}" type=checkbox></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:nth-child(5)").append($('<label for="value"></label>'));
+        $(parentElement).find(".containerRow:nth-child(5)").append($(`<label for="value-${parentId}"></label>`));
         $(parentElement).find(".containerRow:nth-child(5) label").text('Value thumb');
-        $(parentElement).find(".containerRow:nth-child(5)").append($('<input id="value" type=number value=0 min=0></input>'));
+        $(parentElement).find(".containerRow:nth-child(5)").append($(`<input id="value-${parentId}" type=number value=0 min=0></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:nth-child(6)").append($('<label for="Values"></label>'));
+        $(parentElement).find(".containerRow:nth-child(6)").append($(`<label for="values-${parentId}"></label>`));
         $(parentElement).find(".containerRow:nth-child(6) label").text('Values thumbs');
-        $(parentElement).find(".containerRow:nth-child(6)").append($('<input id="Values" type=number value=0 min=0></input>'));
-        $(parentElement).find(".containerRow:nth-child(6)").append($('<input type=number value=0 min=0></input>'));
+        $(parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values-${parentId}" type=number value=0 min=0></input>`));
+        $(parentElement).find(".containerRow:nth-child(6)").append($(`<input type=number value=0 min=0></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:nth-child(7)").append($('<label for="Step"></label>'));
+        $(parentElement).find(".containerRow:nth-child(7)").append($(`<label for="step-${parentId}"></label>`));
         $(parentElement).find(".containerRow:nth-child(7) label").text('Step');
-        $(parentElement).find(".containerRow:nth-child(7)").append($('<input id="Step" type=number value=0 min=0></input>'));
+        $(parentElement).find(".containerRow:nth-child(7)").append($(`<input id="step-${parentId}" type=number value=0 min=0></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:nth-child(8)").append($('<label for="text"></label>'));
+        $(parentElement).find(".containerRow:nth-child(8)").append($(`<label for="text-${parentId}"></label>`));
         $(parentElement).find(".containerRow:nth-child(8) label").text('Value above the thumb');
-        $(parentElement).find(".containerRow:nth-child(8)").append($('<input id="text" type=checkbox></input>'));
+        $(parentElement).find(".containerRow:nth-child(8)").append($(`<input id="text-${parentId}" type=checkbox></input>`));
     }
   }
   
