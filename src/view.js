@@ -134,6 +134,8 @@ class Thumb {
       //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
        let thumbDisplacement = 0;
        let direction = 0;
+       const recalculation = Math.round((nameModel.maxRange - nameModel.minRange)/nameModel.sliderWidth);
+       const step = nameModel.step/recalculation;
        if (nameModel.positionHorizontal){
          thumbDisplacement = event.movementX;
          direction = 'left';
@@ -144,8 +146,8 @@ class Thumb {
        }
         //Задаем ограничения по движению ручек
         const positionContainer = $(parentElement).find(".scale").offset()[direction];
-        let start = 0;
-        let end = 0;
+        let start,
+        end;
         //Ограничения для движения слайдера с одной ручкой
         if (nameModel.oneThumb){
           start = 0;
@@ -166,9 +168,10 @@ class Thumb {
         // Двигаем ручки
           this.style[direction] = coord + thumbDisplacement + 'px';
           const thumb = this;
-          console.log(end, coord + thumbDisplacement)
           new Interval ('interval').WidthInterval(parentElement, nameModel);
-          new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb);
+          if (nameModel.elementText){
+            new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb);
+          }
         }
       }, this) );
       $(document).mouseup(function (){
@@ -202,7 +205,7 @@ class Interval {
     this.name = name;
   }
   CreateInterval(parentElement, nameModel) {
-    $(parentElement).find(".thumb:first-child").after($('<div class="interval"></div>'))
+    $(parentElement).find(".thumb:first-child").after($('<div class="interval"></div>'));
     const position = new Scale().ScalePosition(parentElement, nameModel);
     const defaultPosition = new Thumb ('thumbOne').DefaultPosition(parentElement, nameModel);
     const width = defaultPosition[1] - defaultPosition[0];
@@ -229,15 +232,15 @@ class Slider {
     new Container ('container').CreateContainer(parentElement, nameModel);
     new Scale (nameScale).CreateScale(parentElement, nameModel);
     new ScaleOfValues (nameScale).CreateScaleOfValues(parentElement, nameModel);
+    if (nameModel.oneThumb){
+      new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
+    }
+    else{
+      new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
+      new Thumb ('thumbTwo').CreateThumb(parentElement, nameModel);
+      new Interval ('interval').CreateInterval(parentElement, nameModel);
+    }
     if (nameModel.elementText){
-      if (nameModel.oneThumb){
-        new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
-      }
-      else{
-        new Thumb ('thumbOne').CreateThumb(parentElement, nameModel);
-        new Thumb ('thumbTwo').CreateThumb(parentElement, nameModel);
-        new Interval ('interval').CreateInterval(parentElement, nameModel);
-      }
       new ElementText ('element').CreateElementText(parentElement, nameModel);
     }
     new Thumb ('thumbOne').ThumbMovement(parentElement, nameModel);
@@ -245,9 +248,9 @@ class Slider {
   }
 }
 
-new Slider ('SliderOne').CreateSlider('horizontalScale', ".containerSlider", inputsValue);
-new Slider ('Slidertwo').CreateSlider('jScale', ".containerSlider2", i);
-new Slider ('Slidervv').CreateSlider('jSxccc', ".containerSlider3", inputsValue);
+new Slider ('SliderOne').CreateSlider('horizontalScale', ".container1", inputsValue);
+new Slider ('Slidertwo').CreateSlider('jScale', ".container2", i);
+new Slider ('Slidervv').CreateSlider('jSxccc', ".container3", inputsValue);
 
 
 

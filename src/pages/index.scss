@@ -1,10 +1,50 @@
-.containerSlider{
-    margin: 50px;
-}
-.containerSlider3{
-    margin: 100px;
+// Стили управляющей формы
+.containerPanel1{
+    width: 35%;
+    border: 1px solid #6FCF97;
+    padding: 1rem;
+    border-radius: 1rem;
 }
 
+.containerColumn{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 80%;
+    padding: 2rem;
+    margin: 0 auto;
+}
+
+.containerBlock{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin: 2rem;
+}
+
+.containerRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 2rem;
+    margin: 0.5rem 0;
+}
+
+p {
+    margin: 0;
+}
+
+input{
+    width: 2rem;
+    margin-left: 1rem;
+}
+
+.containerRow:nth-child(6) input:nth-child(2){
+    margin-right: -10rem;
+}
+
+// Стили слайдера
 .containerOfSlider{
     display: flex;
 }
@@ -38,80 +78,10 @@
     content: attr(data-element);
     font-size: 13px;
     bottom: 1rem;
-}
-
-.containerElementText{
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.elementText{
-    position: absolute;
-    margin: 0;
-    font-size: 12px;
+    right: 1rem;
 }
 
 .interval{
     pointer-events: none;
     background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
 }
-
-
-
-
-
-
-
-
-// .containerElementSlider {
-//     width: 40%;
-// }
-
-// .containerSlider{
-//     position: relative;
-// }
-
-// .containerRow{
-//     display: flex;
-//     flex-direction: row;
-//     justify-content: space-between;
-//     align-items: center;
-// }
-
-// .containerRow__price{
-//     display: flex;
-//     flex-direction: row;
-//     margin-bottom: 2rem;
-// }
-
-// .containerSlider__slider {
-//     pointer-events: none;
-//     margin: 0 0 0.7rem 0;
-//     cursor: pointer;
-//     padding-left: 20%;
-//     padding-right: 20%;
-//     background-color: #ffffff;
-//     box-sizing: border-box;
-//     border: 1px solid #6FCF97;
-//     border-radius: 0.5rem;
-// }
-  
-// .containerSlider__slider.focusable {
-//     border: 1px solid #ffffff
-// }
-  
-// .thumb {
-//     cursor: pointer;
-//     border-color: #ffffff;
-//     border-style: solid;
-//     background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
-//     border-radius: 50%;
-//     position: absolute;
-// }
-  
-// .track {
-//     pointer-events: none;
-//     height: 100%;
-//     background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
-// }
