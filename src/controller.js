@@ -1,4 +1,6 @@
 import $ from 'jquery'
-import  {inputsValue} from './model.js'
+import  {inputsValue, i} from './model.js'
+
+
 
  

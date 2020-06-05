@@ -96,18 +96,19 @@ class ElementText {
     const positionContainer = $(parentElement).find(".scale").offset()[position[0]];
     const elementFirstPosition = ($(parentElement).find(".thumb:first-child").offset()[position[0]]) - positionContainer;
     const elementSecondPosition = ($(parentElement).find(".thumb:last-child").offset()[position[0]]) - positionContainer;
+    const UnitRatio = nameModel.sliderWidth/(nameModel.maxRange-nameModel.minRange);
     let value;
     if(nameModel.oneThumb){
-      value = Math.round((nameModel.maxRange - nameModel.minRange) * elementFirstPosition/nameModel.sliderWidth);
+      value = Math.round(elementFirstPosition/UnitRatio+nameModel.minRange);
       elementFirst.dataset.element = value;
     }
     else{
       if (thumb === elementFirst){
-      value = Math.round((nameModel.maxRange - nameModel.minRange) * elementFirstPosition/nameModel.sliderWidth);
+      value = Math.round(elementFirstPosition/UnitRatio+nameModel.minRange);
       elementFirst.dataset.element = value;
       }
       else{
-        value = Math.round((nameModel.maxRange - nameModel.minRange) * elementSecondPosition/nameModel.sliderWidth);
+        value = Math.round(elementSecondPosition/UnitRatio+nameModel.minRange);
         elementSecond.dataset.element = value;
       }
     }
@@ -117,9 +118,10 @@ class ElementText {
 // Ручки
 class Thumb {
   constructor(name) {
+    this.name = name;
   }
   CreateThumb(parentElement, nameModel) {
-    $(parentElement).find(".scale").append($('<span class="thumb" ></span>'));
+    $(parentElement).find(".scale").append($('<span class="thumb"></span>'));
     if (nameModel.positionHorizontal){
       $(parentElement).find(".thumb").css("bottom", ("-7px"));
     }
@@ -183,19 +185,20 @@ class Thumb {
   DefaultPosition(parentElement, nameModel){
     const position = new Scale().ScalePosition(parentElement, nameModel);
     let recalculation;
-    if (nameModel.oneThumb){
-      //Пересчитываем заданное в модели значение на пиксели
-      recalculation = (nameModel.sliderWidth * nameModel.value)/(nameModel.maxRange - nameModel.minRange);
-      $(parentElement).find(".thumb").css(position[0], (recalculation + 'px'));
+    const UnitRatio = nameModel.sliderWidth/(nameModel.maxRange-nameModel.minRange);
+    if(nameModel.oneThumb){
+      recalculation = (nameModel.value-nameModel.minRange)*UnitRatio;
+      $(parentElement).find(".thumb:first-child").css(position[0], (recalculation + 'px'));
     }
     else{
       recalculation = [];
-      recalculation[0] = Math.round((nameModel.sliderWidth * nameModel.values[0])/(nameModel.maxRange - nameModel.minRange));
+      recalculation[0] = (nameModel.values[0]-nameModel.minRange)*UnitRatio;
       $(parentElement).find(".thumb:first-child").css(position[0], (recalculation[0] + 'px'));
-      recalculation[1] = Math.round((nameModel.sliderWidth * nameModel.values[1])/(nameModel.maxRange - nameModel.minRange));
+      recalculation[1] = (nameModel.values[1]-nameModel.minRange)*UnitRatio;
       $(parentElement).find(".thumb:last-child").css(position[0], (recalculation[1] + 'px'));
-      return recalculation;
     }
+    console.log(recalculation, UnitRatio);
+    return recalculation;
   }
 }
 
