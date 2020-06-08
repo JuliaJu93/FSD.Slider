@@ -89,27 +89,39 @@ class ElementText {
       elementSecond.dataset.element = nameModel.values[1];
     }
   }
-  СhangeValueElement(parentElement, nameModel, thumb){
-    const position = new Scale().ScalePosition(parentElement, nameModel);
+  СhangeValueElement(parentElement, nameModel, thumb, thumbDisplacement){
     const elementFirst = $(parentElement).find(".thumb:first-child")[0];
     const elementSecond = $(parentElement).find(".thumb:last-child")[0];
-    const positionContainer = $(parentElement).find(".scale").offset()[position[0]];
-    const elementFirstPosition = ($(parentElement).find(".thumb:first-child").offset()[position[0]]) - positionContainer;
-    const elementSecondPosition = ($(parentElement).find(".thumb:last-child").offset()[position[0]]) - positionContainer;
-    const UnitRatio = nameModel.sliderWidth/(nameModel.maxRange-nameModel.minRange);
     let value;
-    if(nameModel.oneThumb){
-      value = Math.round(elementFirstPosition/UnitRatio+nameModel.minRange);
+    if (nameModel.oneThumb){
+      if (thumbDisplacement > 0) {
+        value = +elementFirst.dataset.element + nameModel.step;
+      }
+      else {
+        value = +elementFirst.dataset.element - nameModel.step;
+      }
       elementFirst.dataset.element = value;
     }
-    else{
-      if (thumb === elementFirst){
-      value = Math.round(elementFirstPosition/UnitRatio+nameModel.minRange);
-      elementFirst.dataset.element = value;
+    else {
+      if (thumb === elementFirst) {
+        if(thumbDisplacement > 0) {
+          value = +elementFirst.dataset.element + nameModel.step;
+          elementFirst.dataset.element = value;
+        }
+        else {
+          value = +elementFirst.dataset.element - nameModel.step;
+          elementFirst.dataset.element = value;
+        }
       }
-      else{
-        value = Math.round(elementSecondPosition/UnitRatio+nameModel.minRange);
-        elementSecond.dataset.element = value;
+      else {
+        if(thumbDisplacement > 0) {
+          value = +elementSecond.dataset.element + nameModel.step;
+          elementSecond.dataset.element = value;
+        }
+        else {
+          value = +elementSecond.dataset.element - nameModel.step;
+          elementSecond.dataset.element = value;
+        }
       }
     }
   }
@@ -133,23 +145,30 @@ class Thumb {
   ThumbMovement(parentElement, nameModel) {
     $(parentElement).find(".thumb").mousedown(function (){
       $(document).mousemove($.proxy(function (){
+        const thumb = this;
       //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
-       let thumbDisplacement = 0;
-       let direction = 0;
-       const recalculation = Math.round((nameModel.maxRange - nameModel.minRange)/nameModel.sliderWidth);
-       const step = nameModel.step/recalculation;
+       let thumbDisplacement,
+       direction,
+       page;
        if (nameModel.positionHorizontal){
-         thumbDisplacement = event.movementX;
-         direction = 'left';
+        thumbDisplacement = event.movementX;
+        direction = 'left';
+        page = Math.round(event.pageX-$(parentElement).find(".scale").offset()[direction]);
        }
        else {
-         thumbDisplacement = event.movementY;
-         direction = 'top';
+        thumbDisplacement = event.movementY;
+        direction = 'top';
+        page = Math.round(event.pageY-$(parentElement).find(".scale").offset()[direction]);
        }
         //Задаем ограничения по движению ручек
         const positionContainer = $(parentElement).find(".scale").offset()[direction];
         let start,
         end;
+        //Движение ручки по заданному шагу
+        const recalculation = Math.round(nameModel.sliderWidth/(nameModel.maxRange-nameModel.minRange));
+        const step = nameModel.step*recalculation - 1;
+        // const page = Math.round(event.pageY-positionContainer);
+        
         //Ограничения для движения слайдера с одной ручкой
         if (nameModel.oneThumb){
           start = 0;
@@ -158,21 +177,32 @@ class Thumb {
         //Ограничения для движения слайдера с двумя ручками
         else if (this === $(parentElement).find(".thumb:first-child")[0]){
           start = 0;
-          end = $(parentElement).find(".thumb:last-child").offset()[direction] - positionContainer - 16*1.35;
+          end = $(parentElement).find(".thumb:last-child").offset()[direction] - positionContainer;
         }
         else{
-          start = $(parentElement).find(".thumb:first-child").offset()[direction] - positionContainer + 16*1.25;
+          start = $(parentElement).find(".thumb:first-child").offset()[direction] - positionContainer;
           end = nameModel.sliderWidth;
         }
         //Проверяем, чтобы ручки не выходили за заданные границы
         const coord = Number.parseInt(this.style[direction]);
-        if (coord + thumbDisplacement >= start-1  && coord + thumbDisplacement < end){
-        // Двигаем ручки
-          this.style[direction] = coord + thumbDisplacement + 'px';
-          const thumb = this;
-          new Interval ('interval').WidthInterval(parentElement, nameModel);
-          if (nameModel.elementText){
-            new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb);
+        if (page > coord + thumbDisplacement + step){
+          if (coord + thumbDisplacement + step >= start  && coord + thumbDisplacement + step <= end){
+            // Двигаем ручки вперед
+            this.style[direction] = coord + thumbDisplacement + step + 'px';
+            new Interval ('interval').WidthInterval(parentElement, nameModel);
+            if (nameModel.elementText){
+              new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb, thumbDisplacement);
+            }
+          }
+        }
+        else if(page < coord + thumbDisplacement - step){
+          if (coord + thumbDisplacement - step >= start  && coord + thumbDisplacement - step <= end){
+            // Двигаем ручки назад
+            this.style[direction] = coord + thumbDisplacement - step + 'px';
+            new Interval ('interval').WidthInterval(parentElement, nameModel);
+            if (nameModel.elementText){
+              new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb, thumbDisplacement);
+            }
           }
         }
       }, this) );
@@ -197,7 +227,6 @@ class Thumb {
       recalculation[1] = (nameModel.values[1]-nameModel.minRange)*UnitRatio;
       $(parentElement).find(".thumb:last-child").css(position[0], (recalculation[1] + 'px'));
     }
-    console.log(recalculation, UnitRatio);
     return recalculation;
   }
 }
