@@ -89,39 +89,25 @@ class ElementText {
       elementSecond.dataset.element = nameModel.values[1];
     }
   }
-  СhangeValueElement(parentElement, nameModel, thumb, thumbDisplacement){
-    const elementFirst = $(parentElement).find(".thumb:first-child")[0];
-    const elementSecond = $(parentElement).find(".thumb:last-child")[0];
+  СhangeValueElement(parentElement, nameModel, thumb){
+    const position = new Scale().ScalePosition(parentElement, nameModel);
+    const positionContainer = $(parentElement).find(".scale").offset()[position[0]];
+    const thumbFirst = $(parentElement).find(".thumb:first-child").offset()[position[0]];
+    const thumbSecond = $(parentElement).find(".thumb:last-child").offset()[position[0]];
     let value;
+    const UnitRatio = nameModel.sliderWidth/(nameModel.maxRange-nameModel.minRange);
     if (nameModel.oneThumb){
-      if (thumbDisplacement > 0) {
-        value = +elementFirst.dataset.element + nameModel.step;
-      }
-      else {
-        value = +elementFirst.dataset.element - nameModel.step;
-      }
-      elementFirst.dataset.element = value;
+      value = Math.trunc((thumbFirst-positionContainer)/UnitRatio); 
+      $(parentElement).find(".thumb:first-child")[0].dataset.element = value;
     }
     else {
-      if (thumb === elementFirst) {
-        if(thumbDisplacement > 0) {
-          value = +elementFirst.dataset.element + nameModel.step;
-          elementFirst.dataset.element = value;
-        }
-        else {
-          value = +elementFirst.dataset.element - nameModel.step;
-          elementFirst.dataset.element = value;
-        }
+      if (thumb === $(parentElement).find(".thumb:first-child")[0]) {
+        value = Math.trunc((thumbFirst-positionContainer)/UnitRatio); 
+        $(parentElement).find(".thumb:first-child")[0].dataset.element = value;
       }
       else {
-        if(thumbDisplacement > 0) {
-          value = +elementSecond.dataset.element + nameModel.step;
-          elementSecond.dataset.element = value;
-        }
-        else {
-          value = +elementSecond.dataset.element - nameModel.step;
-          elementSecond.dataset.element = value;
-        }
+        value = Math.trunc((thumbSecond-positionContainer)/UnitRatio); 
+        $(parentElement).find(".thumb:last-child")[0].dataset.element = value;
       }
     }
   }
@@ -147,28 +133,28 @@ class Thumb {
       $(document).mousemove($.proxy(function (){
         const thumb = this;
       //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
-       let thumbDisplacement,
-       direction,
-       page;
-       if (nameModel.positionHorizontal){
+      let thumbDisplacement,
+      direction,
+      page;
+      if (nameModel.positionHorizontal){
         thumbDisplacement = event.movementX;
         direction = 'left';
         page = Math.round(event.pageX-$(parentElement).find(".scale").offset()[direction]);
-       }
-       else {
+      }
+      else {
         thumbDisplacement = event.movementY;
         direction = 'top';
         page = Math.round(event.pageY-$(parentElement).find(".scale").offset()[direction]);
-       }
+      }
         //Задаем ограничения по движению ручек
-        const positionContainer = $(parentElement).find(".scale").offset()[direction];
-        let start,
-        end;
+      const positionContainer = $(parentElement).find(".scale").offset()[direction];
+      let start,
+      end;
         //Движение ручки по заданному шагу
-        const recalculation = Math.round(nameModel.sliderWidth/(nameModel.maxRange-nameModel.minRange));
-        const step = nameModel.step*recalculation - 1;
-        // const page = Math.round(event.pageY-positionContainer);
-        
+        //количество шагов, вмещающихся в диапазон
+        const recalculation = (nameModel.maxRange-nameModel.minRange) / nameModel.step;
+        //количество пикселей в одном шаге
+        let step = nameModel.sliderWidth / recalculation;
         //Ограничения для движения слайдера с одной ручкой
         if (nameModel.oneThumb){
           start = 0;
@@ -177,28 +163,28 @@ class Thumb {
         //Ограничения для движения слайдера с двумя ручками
         else if (this === $(parentElement).find(".thumb:first-child")[0]){
           start = 0;
-          end = $(parentElement).find(".thumb:last-child").offset()[direction] - positionContainer;
+          end = $(parentElement).find(".thumb:last-child").offset()[direction] - positionContainer - 21;
         }
         else{
-          start = $(parentElement).find(".thumb:first-child").offset()[direction] - positionContainer;
+          start = $(parentElement).find(".thumb:first-child").offset()[direction] - positionContainer + 19;
           end = nameModel.sliderWidth;
         }
         //Проверяем, чтобы ручки не выходили за заданные границы
         const coord = Number.parseInt(this.style[direction]);
-        if (page > coord + thumbDisplacement + step){
-          if (coord + thumbDisplacement + step >= start  && coord + thumbDisplacement + step <= end){
+        if (page > coord + step){
+          if (coord + step >= start  && coord + step <= end){
             // Двигаем ручки вперед
-            this.style[direction] = coord + thumbDisplacement + step + 'px';
+            this.style[direction] = coord + step + 'px';
             new Interval ('interval').WidthInterval(parentElement, nameModel);
             if (nameModel.elementText){
               new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb, thumbDisplacement);
             }
           }
         }
-        else if(page < coord + thumbDisplacement - step){
-          if (coord + thumbDisplacement - step >= start  && coord + thumbDisplacement - step <= end){
+        else if(page < coord - step){
+          if (coord - step >= start  && coord- step <= end){
             // Двигаем ручки назад
-            this.style[direction] = coord + thumbDisplacement - step + 'px';
+            this.style[direction] = coord - step + 'px';
             new Interval ('interval').WidthInterval(parentElement, nameModel);
             if (nameModel.elementText){
               new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb, thumbDisplacement);
@@ -283,6 +269,3 @@ class Slider {
 new Slider ('SliderOne').CreateSlider('horizontalScale', ".container1", inputsValue);
 new Slider ('Slidertwo').CreateSlider('jScale', ".container2", i);
 new Slider ('Slidervv').CreateSlider('jSxccc', ".container3", inputsValue);
-
-
-

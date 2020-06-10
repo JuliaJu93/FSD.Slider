@@ -1,88 +1,88 @@
 // Стили управляющей формы
-.containerPanel1{
-    width: 35%;
-    border: 1px solid #6FCF97;
-    padding: 1rem;
-    border-radius: 1rem;
+.containerPanel1 {
+  width: 35%;
+  border: 1px solid #6fcf97;
+  padding: 1rem;
+  border-radius: 1rem;
 }
 
-.containerColumn{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 80%;
-    padding: 2rem;
-    margin: 0 auto;
+.containerColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 80%;
+  padding: 2rem;
+  margin: 0 auto;
 }
 
-.containerBlock{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    margin: 2rem;
+.containerBlock {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  margin: 2rem;
 }
 
-.containerRow{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    height: 2rem;
-    margin: 0.5rem 0;
+.containerRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 2rem;
+  margin: 0.5rem 0;
 }
 
 p {
-    margin: 0;
+  margin: 0;
 }
 
-input{
-    width: 4rem;
-    margin-left: 1rem;
+input {
+  width: 4rem;
+  margin-left: 1rem;
 }
 
-.containerRow:nth-child(6) input:nth-child(2){
-    margin-right: -5rem;
+.containerRow:nth-child(6) input:nth-child(2) {
+  margin-right: -5rem;
 }
 
 // Стили слайдера
-.containerOfSlider{
-    display: flex;
+.containerOfSlider {
+  display: flex;
 }
 
-.scale{
-    border: 1px solid #6FCF97;
-    width: 6px;
-    height: 6px;
-    border-radius: 5px;
-    position: relative;
-    margin-bottom: 0.5rem;
+.scale {
+  border: 1px solid #6fcf97;
+  width: 6px;
+  height: 6px;
+  border-radius: 5px;
+  position: relative;
+  margin-bottom: 0.5rem;
 }
 
-.scaleOfValues{
-    display: flex;
-    justify-content: space-between;
+.scaleOfValues {
+  display: flex;
+  justify-content: space-between;
 }
 
-.thumb{
-    cursor: pointer;
-    border-color: #ffffff;
-    border-style: solid;
-    background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
-    border-radius: 50%;
-    position: absolute;
-    height: 16px;
-    width: 16px;
+.thumb {
+  cursor: pointer;
+  border-color: #ffffff;
+  border-style: solid;
+  background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
+  border-radius: 50%;
+  position: absolute;
+  height: 16px;
+  width: 16px;
 }
 
-.thumb:after{
-    position: absolute;
-    content: attr(data-element);
-    font-size: 13px;
-    bottom: 1rem;
-    right: 1rem;
+.thumb:after {
+  position: absolute;
+  content: attr(data-element);
+  font-size: 13px;
+  bottom: 1rem;
+  right: 1rem;
 }
 
-.interval{
-    pointer-events: none;
-    background: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
+.interval {
+  pointer-events: none;
+  background: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
 }
