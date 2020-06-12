@@ -97,19 +97,21 @@ class ElementText {
     let value;
     const UnitRatio = nameModel.sliderWidth/(nameModel.maxRange-nameModel.minRange);
     if (nameModel.oneThumb){
-      value = Math.trunc((thumbFirst-positionContainer)/UnitRatio); 
+      value = Math.trunc(((thumbFirst-positionContainer)/UnitRatio) + nameModel.minRange); 
       $(parentElement).find(".thumb:first-child")[0].dataset.element = value;
     }
     else {
       if (thumb === $(parentElement).find(".thumb:first-child")[0]) {
-        value = Math.trunc((thumbFirst-positionContainer)/UnitRatio); 
+        value = Math.trunc(((thumbFirst-positionContainer)/UnitRatio) + nameModel.minRange); 
         $(parentElement).find(".thumb:first-child")[0].dataset.element = value;
       }
       else {
-        value = Math.trunc((thumbSecond-positionContainer)/UnitRatio); 
+        value = Math.trunc(((thumbSecond-positionContainer)/UnitRatio) + nameModel.minRange); 
         $(parentElement).find(".thumb:last-child")[0].dataset.element = value;
       }
     }
+    //Публикация
+    $(document).trigger("onclick", [value, thumb, nameModel, parentElement]);
   }
 }
 
@@ -133,18 +135,15 @@ class Thumb {
       $(document).mousemove($.proxy(function (){
         const thumb = this;
       //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
-      let thumbDisplacement,
-      direction,
-      page;
+      let direction,
+      cursorPosition;
       if (nameModel.positionHorizontal){
-        thumbDisplacement = event.movementX;
         direction = 'left';
-        page = Math.round(event.pageX-$(parentElement).find(".scale").offset()[direction]);
+        cursorPosition = Math.round(event.pageX-$(parentElement).find(".scale").offset()[direction]);
       }
       else {
-        thumbDisplacement = event.movementY;
         direction = 'top';
-        page = Math.round(event.pageY-$(parentElement).find(".scale").offset()[direction]);
+        cursorPosition = Math.round(event.pageY-$(parentElement).find(".scale").offset()[direction]);
       }
         //Задаем ограничения по движению ручек
       const positionContainer = $(parentElement).find(".scale").offset()[direction];
@@ -167,27 +166,27 @@ class Thumb {
         }
         else{
           start = $(parentElement).find(".thumb:first-child").offset()[direction] - positionContainer + 19;
-          end = nameModel.sliderWidth;
+          end = nameModel.sliderWidth+1;
         }
         //Проверяем, чтобы ручки не выходили за заданные границы
         const coord = Number.parseInt(this.style[direction]);
-        if (page > coord + step){
+        if (cursorPosition > coord + step){
           if (coord + step >= start  && coord + step <= end){
             // Двигаем ручки вперед
             this.style[direction] = coord + step + 'px';
             new Interval ('interval').WidthInterval(parentElement, nameModel);
             if (nameModel.elementText){
-              new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb, thumbDisplacement);
+              new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb);
             }
           }
         }
-        else if(page < coord - step){
-          if (coord - step >= start  && coord- step <= end){
+        else if(cursorPosition < coord - step){
+          if (coord - step >= start  && coord - step <= end){
             // Двигаем ручки назад
             this.style[direction] = coord - step + 'px';
             new Interval ('interval').WidthInterval(parentElement, nameModel);
             if (nameModel.elementText){
-              new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb, thumbDisplacement);
+              new ElementText ('interval').СhangeValueElement(parentElement, nameModel, thumb);
             }
           }
         }

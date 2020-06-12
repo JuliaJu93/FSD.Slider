@@ -1,14 +1,34 @@
 import $ from 'jquery'
 
+export class Model {
+    constructor(name, sliderWidth, positionHorizontal, minRange, maxRange, oneThumb, values, value, step, elementText) {
+      this.name = name;
+      this.sliderWidth = sliderWidth;
+      this.positionHorizontal = positionHorizontal;
+      this.minRange = minRange;
+      this.maxRange = maxRange;
+      this.oneThumb = oneThumb;
+      this.values = values;
+      this.value = value;
+      this.step = step;
+      this.elementText = elementText;
+    }
+    CreateScaleOfValues(parentElement, nameModel) {
+     
+    }
+}
+
+new Model ('model1', 400, true, 0, 200, false, [50, 180], 180, 10, true);
+
 export let inputsValue = {
     sliderWidth: 400, // Ширина шкалы (пиксели)
     positionHorizontal: true, // Позиция шкалы (true - если горизонтальная, false - если вертикальная)
     minRange: 0, // Минимальное значение шкалы
     maxRange: 200, // Максимальное значение шкалы
     oneThumb: false, // Количество ручек (true - если ручка одна, false - если их несколько)
-    values: [40, 180], // Интервал по умолчанию для шкалы с двумя ручками
+    values: [50, 180], // Интервал по умолчанию для шкалы с двумя ручками
     value: 180, // Значение по умолчанию для шкалы с одной ручкой
-    step: 1, // Шаг движения ручки
+    step: 10, // Шаг движения ручки
     elementText: true, // Элемент над ручкой
 };
 
@@ -66,10 +86,10 @@ class ControlPanel {
         $(parentElement).find(".containerRow:nth-child(5)").append($(`<input id="value-${parentId}" type=number value=${nameModel.value} min=0></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
-        $(parentElement).find(".containerRow:nth-child(6)").append($(`<label for="values-${parentId}"></label>`));
+        $(parentElement).find(".containerRow:nth-child(6)").append($(`<label for="values1-${parentId}"></label>`));
         $(parentElement).find(".containerRow:nth-child(6) label").text('Values thumbs');
-        $(parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values-${parentId}" type=number value=${nameModel.values[0]} min=0></input>`));
-        $(parentElement).find(".containerRow:nth-child(6)").append($(`<input type=number value=${nameModel.values[1]} min=0></input>`));
+        $(parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values1-${parentId}" type=number value=${nameModel.values[0]} min=0></input>`));
+        $(parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values2-${parentId}"type=number value=${nameModel.values[1]} min=0></input>`));
 
         $(parentElement).append($('<div class="containerRow"></div>'));
         $(parentElement).find(".containerRow:nth-child(7)").append($(`<label for="step-${parentId}"></label>`));
@@ -84,6 +104,9 @@ class ControlPanel {
             element = 'checked';
         }
         $(parentElement).find(".containerRow:nth-child(8)").append($(`<input id="text-${parentId}" type=checkbox ${element}></input>`));
+
+        //Публикация
+        $("input").trigger("change", [nameModel, parentElement]);
     }
   }
   
