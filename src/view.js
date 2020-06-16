@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import  {inputsValue, i, Model} from './model.js'
+import  {Model} from './model.js'
 
 class Container {
   constructor(name) {
@@ -266,7 +266,7 @@ class Slider {
 }
 
 //Создание панели управления
-class ControlPanel {
+export class ControlPanel {
   constructor(name) {
     this.name = name;
   }
@@ -278,7 +278,7 @@ class ControlPanel {
       $(parentElement).find(".containerRow:first-child label").text('Position horizontal');
       let position; 
       if (nameModel.positionHorizontal){
-          position = 'checked';
+        position = 'checked';
       }
       $(parentElement).find(".containerRow:first-child ").append($(`<input type=checkbox id='position-${parentId}' ${position}></input>`));
 
@@ -322,7 +322,7 @@ class ControlPanel {
       $(parentElement).find(".containerRow:nth-child(8) label").text('Value above the thumb');
       let element; 
       if (nameModel.elementText){
-          element = 'checked';
+        element = 'checked';
       }
       $(parentElement).find(".containerRow:nth-child(8)").append($(`<input id="text-${parentId}" type=checkbox ${element}></input>`));
 
@@ -331,9 +331,14 @@ class ControlPanel {
   }
 }
 
-new Slider ('SliderOne').CreateSlider('horizontalScale', ".container1", inputsValue);
-new ControlPanel ('panel1').CreateControlPanel(".containerPanel1", inputsValue);
+let model1 = new Model ('model1', 400, true, 0, 200, false, [50, 180], 180, 10, true);
+new Slider ('SliderOne').CreateSlider('horizontalScale', ".container1", model1);
+new ControlPanel ('panel1').CreateControlPanel(".containerPanel1", model1);
 
-new Slider ('Slidertwo').CreateSlider('jScale', ".container2", i);
+let model2 = new Model ('model2', 200, false, 20, 100, true, [20, 90], 50, 1, true);
+new Slider ('Slidertwo').CreateSlider('jScale', ".container2", model2);
+new ControlPanel ('panel2').CreateControlPanel(".containerPanel2", model2);
 
-new Slider ('Slidervv').CreateSlider('jSxccc', ".container3", inputsValue);
+let model3 = new Model ('model2', 400,  true, 10, 100, false, [20, 90], 50, 40, false);
+new Slider ('Slidervv').CreateSlider('jSxccc', ".container3", model3);
+new ControlPanel ('panel3').CreateControlPanel(".containerPanel3", model3);
