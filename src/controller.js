@@ -1,8 +1,6 @@
 import $ from 'jquery'
-import  {Model} from './model.js'
-import  {ControlPanel} from './model.js'
 
-//Подписчик для View
+//Подписчик для View. Получает значение над руччкой ползунка и устанавливает его в панель управления
 $(document).on("onclick", function(event, value, thumb, nameModel, parentElement) {
     const panel =  $(parentElement).siblings()[0];
     const parentId =  $(panel).attr('id');
@@ -24,7 +22,7 @@ $(document).on("onclick", function(event, value, thumb, nameModel, parentElement
 
 //Подписчик для панели управления
 $("input").on("change", function(event, nameModel, parentElement) {
-    console.log(event)
+    console.log(this.value, nameModel, parentElement)
 });
 
 
