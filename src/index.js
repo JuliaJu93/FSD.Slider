@@ -1,4 +1,5 @@
 import './pages/index.scss'
+import './controller'
 import './model'
 import './view'
-import './controller'
+
