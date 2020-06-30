@@ -13,11 +13,5 @@ export class Model {
     this.step = step,
     this.elementText = elementText;
   };
-  // setParameter (nameModel, values, value){
-  //   let handler = {
-  //   set: this.values[0] = values
-  //   }
-  //   nameModel = new Proxy (this, handler);
-  // }
 }
 

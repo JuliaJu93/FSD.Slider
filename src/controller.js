@@ -22,7 +22,7 @@ $(document).on("onclick", function(event, value, thumb, nameModel, parentElement
 });
 
 // Пересохраняем данные в модели при вводе значений в панель управления и обновляем слайдер
-function setParameter(nameModel, target, parentId, slider) {
+function setParameter(nameModel, target, parentId, slider, parentElement) {
   let handler = {};
   nameModel = new Proxy (nameModel, handler);
   switch (target.id) {
@@ -30,22 +30,60 @@ function setParameter(nameModel, target, parentId, slider) {
       handler = {
         set: nameModel.positionHorizontal = $(target).prop("checked")
       }
-      slider.scale.createScale();
-      slider.scale.scalePosition();  
+      slider.container.deleteContainer();
+      slider.scaleOfValues.deleteScaleOfValues();
+      slider.createSlider();
+    break
+    case `min-${parentId}`:
+      handler = {
+        set: nameModel.minRange = target.value
+      }
+      slider.scaleOfValues.deleteScaleOfValues();
+      slider.scaleOfValues.createScaleOfValues();
+      slider.doubleThumb1.thumbMovement();
+      slider.doubleThumb1.defaultPosition();
+    break
+    case `max-${parentId}`:
+      handler = {
+        set: nameModel.maxRange = target.value
+      }
+      slider.scaleOfValues.deleteScaleOfValues();
+      slider.scaleOfValues.createScaleOfValues();
+      slider.doubleThumb1.thumbMovement();
+      slider.doubleThumb1.defaultPosition();
+    break
+    case `thumb-${parentId}`:
+      handler = {
+        set: nameModel.oneThumb = $(target).prop("checked")
+      } 
+      if (slider.nameModel.oneThumb){
+        slider.interval.deleteInterval();
+        slider.singleThumb.deleteThumb();
+        slider.singleThumb.createThumb();
+      }
+      else {
+        slider.singleThumb.deleteThumb();
+        slider.doubleThumb1.createThumb();
+        slider.doubleThumb2.createThumb();
+        slider.interval.createInterval();
+      }
+      slider.elementText.createElementText();
+      slider.doubleThumb1.thumbMovement();
+      slider.doubleThumb1.defaultPosition();
     break  
     case `values1-${parentId}`:
-      handler = {
+      handler = { 
         set: nameModel.values[0] = target.value
       } 
       slider.singleThumb.defaultPosition();
-      slider.elementText.changeValueElement();
+      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0]);
     break
     case `values2-${parentId}`:
       handler = {
         set: nameModel.values[1] = target.value
       } 
       slider.singleThumb.defaultPosition();
-      slider.elementText.changeValueElement();
+      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1]);
     break
     case `value-${parentId}`:
       handler = {
@@ -54,6 +92,18 @@ function setParameter(nameModel, target, parentId, slider) {
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement();
     break
+    case `step-${parentId}`:
+      handler = {
+        set: nameModel.step = target.value
+      }
+      slider.singleThumb.thumbMovement();
+    break
+    case `text-${parentId}`:
+      handler = {
+        set: nameModel.elementText = $(target).prop("checked")
+      }
+      slider.elementText.createElementText();
+    break   
   }
 }
 
@@ -121,10 +171,10 @@ export class ControlPanel {
     $(this.parentElement).find(".containerRow:nth-child(8)").append($(`<input id="text-${parentId}" type=checkbox ${element}></input>`));
     this.dataInput(this.slider);
   }
-  dataInput(slider){
+  dataInput(slider, parentElement){
     $("input").change(()=> {
       const parentId =  $(this.parentElement).attr('id');
-      setParameter(this.nameModel, event.target, parentId, this.slider);
+      setParameter(this.nameModel, event.target, parentId, this.slider, $(this.parentElement).siblings());
     });
   }
   setValue(parentId) {

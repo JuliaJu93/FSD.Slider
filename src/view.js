@@ -14,6 +14,9 @@ class Container {
     const position = this.scale.scalePosition();
     $(this.parentElement).find(".containerOfSlider").css('flex-direction', position[4]);
   }
+  deleteContainer() {
+    $(this.parentElement).find(".containerOfSlider").remove();
+  }
 }
 
 //Создание Шкалы произвольной ширины, с возможностью изменять ее позицию (горизонтальная или вертикальная)
@@ -72,6 +75,9 @@ class Scale {
     }
     return ([direction, margin, size, intervalPosition, positionContent, reversePosition, reverseSize]);
   }
+  deleteScale() {
+    $(this.parentElement).find(".scale").remove();
+  }
 }
 
 // Шкала со значениями под ползунком
@@ -95,6 +101,9 @@ class ScaleOfValues {
     $(this.parentElement).find("p:first-child").text(this.nameModel.minRange);
     $(this.parentElement).find("p:last-child").text(this.nameModel.maxRange);
   }
+  deleteScaleOfValues() {
+    $(this.parentElement).find(".scaleOfValues").remove();
+  }
 }
 
 //Значение над ручками
@@ -108,12 +117,23 @@ class ElementText {
   createElementText() {
     const elementFirst = $(this.parentElement).find(".thumb:first-child")[0];
     const elementSecond = $(this.parentElement).find(".thumb:last-child")[0];
-    if(this.nameModel.oneThumb){
-      elementFirst.dataset.element = this.nameModel.value;
+    if (this.nameModel.elementText){
+      if(this.nameModel.oneThumb){
+        elementFirst.dataset.element = this.nameModel.value;
+      }
+      else{
+        elementFirst.dataset.element = this.nameModel.values[0];
+        elementSecond.dataset.element = this.nameModel.values[1];
+      }
     }
-    else{
-      elementFirst.dataset.element = this.nameModel.values[0];
-      elementSecond.dataset.element = this.nameModel.values[1];
+    else {
+      if(this.nameModel.oneThumb){
+        elementFirst.dataset.element = '';
+      }
+      else{
+        elementFirst.dataset.element = '';
+        elementSecond.dataset.element = '';
+      }
     }
   }
   changeValueElement(thumb){
@@ -124,17 +144,23 @@ class ElementText {
     let value;
     const UnitRatio = this.nameModel.sliderWidth/(this.nameModel.maxRange-this.nameModel.minRange);
     if (this.nameModel.oneThumb){
-      value = Math.trunc(((thumbFirst-positionContainer)/UnitRatio) + this.nameModel.minRange); 
+      value = Math.trunc(((thumbFirst-positionContainer)/UnitRatio) + this.nameModel.minRange);
+      if (this.nameModel.elementText) { 
       $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
+      }
     }
     else {
       if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
-        value = Math.trunc(((thumbFirst-positionContainer)/UnitRatio) + this.nameModel.minRange); 
+        value = Math.trunc(((thumbFirst-positionContainer)/UnitRatio) + this.nameModel.minRange);
+        if (this.nameModel.elementText) {  
         $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
+        }
       }
       else {
         value = Math.trunc(((thumbSecond-positionContainer)/UnitRatio) + this.nameModel.minRange); 
+        if (this.nameModel.elementText) { 
         $(this.parentElement).find(".thumb:last-child")[0].dataset.element = value;
+        }
       }
     }
     //Публикация
@@ -214,9 +240,7 @@ class Thumb {
             thumb.style[direction] = coord - step + 'px';
           }
         }
-        if (this.nameModel.elementText){
-          this.elementText.changeValueElement(thumb);
-        }
+        this.elementText.changeValueElement(thumb);
         this.interval.widthInterval();
       });
       $(document).mouseup(function (){
@@ -236,6 +260,9 @@ class Thumb {
       $(this.parentElement).find(".thumb:last-child").css(position[0], (recalculation[1] + 'px'));
     }
     this.interval.widthInterval();
+  }
+  deleteThumb() {
+    $(this.parentElement).find(".thumb").remove();
   }
 }
 
@@ -263,6 +290,9 @@ class Interval {
     const width = thumbSecond - thumbFirst;
     $(this.parentElement).find(".interval").css(position[1], (thumbFirst - positionContainer + 'px'));
     $(this.parentElement).find(".interval").css(position[2], (width + 'px'));
+  }
+  deleteInterval() {
+    $(this.parentElement).find(".interval").remove();
   }
 }
 
@@ -293,9 +323,7 @@ class Slider {
       this.doubleThumb2.createThumb();
       this.interval.createInterval();
     }
-    if (this.nameModel.elementText){
-      this.elementText.createElementText();
-    }
+    this.elementText.createElementText();
     this.doubleThumb1.thumbMovement();
     this.doubleThumb1.defaultPosition();
   }
