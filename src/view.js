@@ -211,7 +211,7 @@ class Thumb {
         //количество шагов, вмещающихся в диапазон
         const recalculation = (this.nameModel.maxRange-this.nameModel.minRange) / this.nameModel.step;
         //количество пикселей в одном шаге
-        let step = this.nameModel.sliderWidth / recalculation;
+        let step = Math.trunc(this.nameModel.sliderWidth / recalculation);
         //Ограничения для движения слайдера с одной ручкой
         if (this.nameModel.oneThumb){
           start = 0;
@@ -329,7 +329,7 @@ class Slider {
   }
 }
 
-let model1 = new Model ('model1', 400, true, 0, 200, false, [50, 180], 180, 10, true);
+let model1 = new Model ('model1', 400, true, 0 , 200, false, [50, 180], 180, 10, true);
 let slider1 = new Slider ('SliderOne', 'Scale1', ".container1", model1, controlPanel1);
 slider1.createSlider();
 let controlPanel1 = new ControlPanel ('panel1', ".containerPanel1", model1, slider1);
@@ -342,7 +342,7 @@ let controlPanel2 = new ControlPanel ('panel2', ".containerPanel2", model2, slid
 controlPanel2.createControlPanel();
 
 
-let model3 = new Model ('model2', 400,  true, 10, 100, false, [20, 90], 50, 40, false);
+let model3 = new Model ('model2', 400,  true, 0, 100, false, [20, 90], 50, 40, false);
 let slider3 = new Slider ('Slidervv', 'Scale3', ".container3", model3, controlPanel3);
 slider3.createSlider();
 let controlPanel3 = new ControlPanel ('panel3', ".containerPanel3", model3, slider3);

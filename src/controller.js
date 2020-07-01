@@ -31,26 +31,21 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
         set: nameModel.positionHorizontal = $(target).prop("checked")
       }
       slider.container.deleteContainer();
-      slider.scaleOfValues.deleteScaleOfValues();
       slider.createSlider();
     break
     case `min-${parentId}`:
       handler = {
-        set: nameModel.minRange = target.value
+        set: nameModel.minRange = +target.value
       }
-      slider.scaleOfValues.deleteScaleOfValues();
-      slider.scaleOfValues.createScaleOfValues();
-      slider.doubleThumb1.thumbMovement();
-      slider.doubleThumb1.defaultPosition();
+      slider.container.deleteContainer();
+      slider.createSlider();
     break
     case `max-${parentId}`:
       handler = {
-        set: nameModel.maxRange = target.value
+        set: nameModel.maxRange = +target.value
       }
-      slider.scaleOfValues.deleteScaleOfValues();
-      slider.scaleOfValues.createScaleOfValues();
-      slider.doubleThumb1.thumbMovement();
-      slider.doubleThumb1.defaultPosition();
+      slider.container.deleteContainer();
+      slider.createSlider();
     break
     case `thumb-${parentId}`:
       handler = {
@@ -73,28 +68,28 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
     break  
     case `values1-${parentId}`:
       handler = { 
-        set: nameModel.values[0] = target.value
+        set: nameModel.values[0] = +target.value
       } 
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0]);
     break
     case `values2-${parentId}`:
       handler = {
-        set: nameModel.values[1] = target.value
+        set: nameModel.values[1] = +target.value
       } 
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1]);
     break
     case `value-${parentId}`:
       handler = {
-        set: nameModel.value = target.value
+        set: nameModel.value = +target.value
       } 
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement();
     break
     case `step-${parentId}`:
       handler = {
-        set: nameModel.step = target.value
+        set: nameModel.step = +target.value
       }
       slider.singleThumb.thumbMovement();
     break
