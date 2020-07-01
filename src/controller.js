@@ -6,8 +6,8 @@ $(document).on("onclick", function(event, value, thumb, nameModel, parentElement
     const panel =  $(parentElement).siblings()[0];
     const parentId =  $(panel).attr('id');
     if (nameModel.oneThumb) {
-        nameModel.value = value;
-        $(panel).find(`#value-${parentId}`).val(value);
+      nameModel.value = value;
+      $(panel).find(`#value-${parentId}`).val(value);
     }
     else {
       if (thumb === $(parentElement).find(".thumb:first-child")[0]){
@@ -67,25 +67,31 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
       slider.doubleThumb1.defaultPosition();
     break  
     case `values1-${parentId}`:
+      if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value <= slider.nameModel.values[1])){
       handler = { 
         set: nameModel.values[0] = +target.value
       } 
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0]);
+      }
     break
     case `values2-${parentId}`:
+      if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value >= slider.nameModel.values[0])){
       handler = {
         set: nameModel.values[1] = +target.value
       } 
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1]);
+      }
     break
     case `value-${parentId}`:
+      if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange)){
       handler = {
         set: nameModel.value = +target.value
       } 
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement();
+      }
     break
     case `step-${parentId}`:
       handler = {
@@ -173,10 +179,10 @@ export class ControlPanel {
     });
   }
   setValue(parentId) {
-    $(this.parentElement).find(".containerRow:nth-child(5)").append($(`<input id="value-${parentId}" type=number value=${this.nameModel.value} min=0></input>`));
+    $(this.parentElement).find(".containerRow:nth-child(5)").append($(`<input id="value-${parentId}" type=number value=${this.nameModel.value} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
   }
   setValues(parentId) {
-    $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values1-${parentId}" type=number value=${this.nameModel.values[0]} min=0></input>`));
-    $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values2-${parentId}"type=number value=${this.nameModel.values[1]} min=0></input>`));
+    $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values1-${parentId}" type=number value=${this.nameModel.values[0]} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
+    $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values2-${parentId}"type=number value=${this.nameModel.values[1]} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
   }
 }
