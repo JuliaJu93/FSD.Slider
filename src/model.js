@@ -1,17 +1,17 @@
 import $ from 'jquery'
 
 export class Model {
-  constructor(name, sliderWidth, positionHorizontal, minRange, maxRange, oneThumb, values, value, step, elementText) {
-    this.name = name,
-    this.sliderWidth = sliderWidth,
-    this.positionHorizontal = positionHorizontal,
-    this.minRange = minRange,
-    this.maxRange = maxRange,
-    this.oneThumb = oneThumb,
-    this.values = values,
-    this.value = value,
-    this.step = step,
-    this.elementText = elementText;
+  constructor(model) {
+    this.name = model.name,
+    this.sliderWidth = model.sliderWidth,
+    this.positionHorizontal = model.positionHorizontal,
+    this.minRange = model.minRange,
+    this.maxRange = model.maxRange,
+    this.oneThumb = model.oneThumb,
+    this.values = model.values,
+    this.value = model.value,
+    this.step = model.step,
+    this.elementText = model.elementText;
   };
 }
 

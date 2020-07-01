@@ -12,7 +12,7 @@ class Container {
   createContainer() {
     $(this.parentElement).append($('<div class="containerOfSlider"></div>'));
     const position = this.scale.scalePosition();
-    $(this.parentElement).find(".containerOfSlider").css('flex-direction', position[4]);
+    $(this.parentElement).find(".containerOfSlider").css('flex-direction', position.positionContent);
   }
   deleteContainer() {
     $(this.parentElement).find(".containerOfSlider").remove();
@@ -29,11 +29,10 @@ class Scale {
   createScale() {
     $(this.parentElement).find(".containerOfSlider").append($('<div class="scale"></div>'));
     const position = this.scalePosition();
-    $(this.parentElement).find(".scale").css(position[2], this.nameModel.sliderWidth + 16);
+    $(this.parentElement).find(".scale").css(position.size, this.nameModel.sliderWidth + 16);
   }
   //Пересчет значений в модели на пиксели;
   countToPixels(){
-    const position = this.scalePosition();
     let recalculation;
     const UnitRatio = this.nameModel.sliderWidth/(this.nameModel.maxRange-this.nameModel.minRange);
     if(this.nameModel.oneThumb){
@@ -62,7 +61,6 @@ class Scale {
       intervalPosition = $(this.parentElement).find(".interval").css('height', (100 + '%'));
       positionContent = 'column';
       reversePosition = 'row';
-      reverseSize = 'height';
     }
     else {
       direction = 'top';
@@ -71,9 +69,8 @@ class Scale {
       intervalPosition = $(this.parentElement).find(".interval").css('width', (100 + '%'));
       positionContent = 'row';
       reversePosition = 'column';
-      reverseSize = 'width';
     }
-    return ([direction, margin, size, intervalPosition, positionContent, reversePosition, reverseSize]);
+    return ({direction, margin, size, positionContent, reversePosition});
   }
   deleteScale() {
     $(this.parentElement).find(".scale").remove();
@@ -91,11 +88,11 @@ class ScaleOfValues {
   createScaleOfValues() {
     const position = this.scale.scalePosition();
     $(this.parentElement).find(".scale").after($('<div class="scaleOfValues"></div>'));
-    $(this.parentElement).find(".scaleOfValues").css(position[2], this.nameModel.sliderWidth + 16*1.35);
-    $(this.parentElement).find(".scaleOfValues").css('flex-direction', position[5]);
+    $(this.parentElement).find(".scaleOfValues").css(position.size, this.nameModel.sliderWidth + 16*1.35);
+    $(this.parentElement).find(".scaleOfValues").css('flex-direction', position.reversePosition);
     $(this.parentElement).find(".scaleOfValues").append($('<p></p>'));
     $(this.parentElement).find(".scaleOfValues").append($('<p></p>'));
-    if (position[4] === 'row'){
+    if (position.positionContent === 'row'){
       $(this.parentElement).find("p").css('margin', '0 1rem');
     }
     $(this.parentElement).find("p:first-child").text(this.nameModel.minRange);
@@ -138,9 +135,9 @@ class ElementText {
   }
   changeValueElement(thumb){
     const position = this.scale.scalePosition();
-    const positionContainer = $(this.parentElement).find(".scale").offset()[position[0]];
-    const thumbFirst = $(this.parentElement).find(".thumb:first-child").offset()[position[0]];
-    const thumbSecond = $(this.parentElement).find(".thumb:last-child").offset()[position[0]];
+    const positionContainer = $(this.parentElement).find(".scale").offset()[position.direction];
+    const thumbFirst = $(this.parentElement).find(".thumb:first-child").offset()[position.direction];
+    const thumbSecond = $(this.parentElement).find(".thumb:last-child").offset()[position.direction];
     let value;
     const UnitRatio = this.nameModel.sliderWidth/(this.nameModel.maxRange-this.nameModel.minRange);
     if (this.nameModel.oneThumb){
@@ -252,12 +249,12 @@ class Thumb {
   defaultPosition(){
     const recalculation = this.scale.countToPixels();
     const position = this.scale.scalePosition();
-    if(this.nameModel.oneThumb){
-      $(this.parentElement).find(".thumb:first-child").css(position[0], (recalculation + 'px'));
+    if (this.nameModel.oneThumb){
+      $(this.parentElement).find(".thumb:first-child").css(position.direction, (recalculation + 'px'));
     }
-    else{
-      $(this.parentElement).find(".thumb:first-child").css(position[0], (recalculation[0] + 'px'));
-      $(this.parentElement).find(".thumb:last-child").css(position[0], (recalculation[1] + 'px'));
+    else {
+      $(this.parentElement).find(".thumb:first-child").css(position.direction, (recalculation[0] + 'px'));
+      $(this.parentElement).find(".thumb:last-child").css(position.direction, (recalculation[1] + 'px'));
     }
     this.interval.widthInterval();
   }
@@ -279,17 +276,17 @@ class Interval {
     const position = this.scale.scalePosition();
     const defaultPosition = this.scale.countToPixels();
     const width = defaultPosition[1] - defaultPosition[0];
-    $(this.parentElement).find(".interval").css(position[2], (width + 'px'));
-    $(this.parentElement).find(".interval").css(position[1], (defaultPosition[0] + 'px'));
+    $(this.parentElement).find(".interval").css(position.size, (width + 'px'));
+    $(this.parentElement).find(".interval").css(position.margin, (defaultPosition[0] + 'px'));
   }
   widthInterval(){
     const position = this.scale.scalePosition();
-    const positionContainer = $(this.parentElement).find(".scale").offset()[position[0]];
-    const thumbFirst = $(this.parentElement).find(".thumb:first-child").offset()[position[0]];
-    const thumbSecond = $(this.parentElement).find(".thumb:last-child").offset()[position[0]];
+    const positionContainer = $(this.parentElement).find(".scale").offset()[position.direction];
+    const thumbFirst = $(this.parentElement).find(".thumb:first-child").offset()[position.direction];
+    const thumbSecond = $(this.parentElement).find(".thumb:last-child").offset()[position.direction];
     const width = thumbSecond - thumbFirst;
-    $(this.parentElement).find(".interval").css(position[1], (thumbFirst - positionContainer + 'px'));
-    $(this.parentElement).find(".interval").css(position[2], (width + 'px'));
+    $(this.parentElement).find(".interval").css(position.margin, (thumbFirst - positionContainer + 'px'));
+    $(this.parentElement).find(".interval").css(position.size, (width + 'px'));
   }
   deleteInterval() {
     $(this.parentElement).find(".interval").remove();
@@ -329,20 +326,20 @@ class Slider {
   }
 }
 
-let model1 = new Model ('model1', 400, true, 0 , 200, false, [50, 180], 180, 10, true);
+let model1 = new Model ({name: 'model1', sliderWidth: 400, positionHorizontal: true, minRange: 0, maxRange: 200, oneThumb: false, values: [50, 180], value: 180, step: 10, elementText: true});
 let slider1 = new Slider ('SliderOne', 'Scale1', ".container1", model1, controlPanel1);
 slider1.createSlider();
 let controlPanel1 = new ControlPanel ('panel1', ".containerPanel1", model1, slider1);
 controlPanel1.createControlPanel();
 
-let model2 = new Model ('model2', 200, false, 20, 100, true, [20, 90], 50, 1, true);
+let model2 = new Model ({name: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 30, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true});
 let slider2 = new Slider ('Slidertwo', 'Scale2', ".container2", model2, controlPanel2);
 slider2.createSlider();
 let controlPanel2 = new ControlPanel ('panel2', ".containerPanel2", model2, slider2);
 controlPanel2.createControlPanel();
 
 
-let model3 = new Model ('model2', 400,  true, 0, 100, false, [20, 90], 50, 40, false);
+let model3 = new Model ({name: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 400, oneThumb: true, values: [150, 380], value: 280, step: 40, elementText: false});
 let slider3 = new Slider ('Slidervv', 'Scale3', ".container3", model3, controlPanel3);
 slider3.createSlider();
 let controlPanel3 = new ControlPanel ('panel3', ".containerPanel3", model3, slider3);
