@@ -1,17 +1,20 @@
-import $ from 'jquery'
-
-export class Model {
-  constructor(model) {
-    this.name = model.name,
-    this.sliderWidth = model.sliderWidth,
-    this.positionHorizontal = model.positionHorizontal,
-    this.minRange = model.minRange,
-    this.maxRange = model.maxRange,
-    this.oneThumb = model.oneThumb,
-    this.values = model.values,
-    this.value = model.value,
-    this.step = model.step,
-    this.elementText = model.elementText;
-  };
-}
-
+"use strict";
+exports.__esModule = true;
+exports.Model = void 0;
+var Model = /** @class */ (function () {
+    function Model(_model) {
+        this.name = _model.name,
+            this.sliderWidth = _model.sliderWidth,
+            this.positionHorizontal = _model.positionHorizontal,
+            this.minRange = _model.minRange,
+            this.maxRange = _model.maxRange,
+            this.oneThumb = _model.oneThumb,
+            this.values = _model.values,
+            this.value = _model.value,
+            this.step = _model.step,
+            this.elementText = _model.elementText;
+    }
+    ;
+    return Model;
+}());
+exports.Model = Model;
