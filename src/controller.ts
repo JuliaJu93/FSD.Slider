@@ -23,7 +23,7 @@ $(document).on("onclick", function(event:Event, value:number, thumb:HTMLElement,
 });
 
 // Пересохраняем данные в модели при вводе значений в панель управления и обновляем слайдер
-function setParameter(nameModel:Model, target, parentId:string, slider:Slider, parentElement) {
+function setParameter (nameModel:Model, target, parentId:string, slider:Slider, parentElement) {
   let handler:object = {};
   nameModel = new Proxy (nameModel, handler);
   switch (target.id) {
@@ -51,7 +51,7 @@ function setParameter(nameModel:Model, target, parentId:string, slider:Slider, p
     case `thumb-${parentId}`:
       handler = {
         set: nameModel.oneThumb = $(target).prop("checked")
-      } 
+      }
       if (slider.nameModel.oneThumb){
         slider.interval.deleteInterval();
         slider.singleThumb.deleteThumb();
@@ -72,27 +72,63 @@ function setParameter(nameModel:Model, target, parentId:string, slider:Slider, p
       handler = { 
         set: nameModel.values[0] = +target.value
       } 
+      }
+      else if (+target.value > slider.nameModel.maxRange) {
+        handler = {
+          set: nameModel.values[0] = slider.nameModel.maxRange
+        }
+        $(`#values1-${parentId}`).val(slider.nameModel.maxRange);
+      }
+      else if (+target.value < slider.nameModel.minRange) {
+        handler = {
+          set: nameModel.values[0] = slider.nameModel.minRange
+        } 
+        $(`#values1-${parentId}`).val(slider.nameModel.minRange);
+      }
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0]);
-      }
     break
     case `values2-${parentId}`:
       if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value >= slider.nameModel.values[0])){
       handler = {
         set: nameModel.values[1] = +target.value
       } 
+      }
+      else if (+target.value > slider.nameModel.maxRange) {
+        handler = {
+          set: nameModel.values[1] = slider.nameModel.maxRange
+        }
+        $(`#values2-${parentId}`).val(slider.nameModel.maxRange);
+      }
+      else if (+target.value < slider.nameModel.minRange) {
+        handler = {
+          set: nameModel.values[1] = slider.nameModel.minRange
+        } 
+        $(`#values2-${parentId}`).val(slider.nameModel.minRange);
+      }
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1]);
-      }
     break
     case `value-${parentId}`:
       if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange)) {
       handler = {
         set: nameModel.value = +target.value
       } 
+      }
+      else if (+target.value > slider.nameModel.maxRange) {
+        handler = {
+          set: nameModel.value = slider.nameModel.maxRange 
+        }
+        $(`#value-${parentId}`).val(slider.nameModel.maxRange);
+      }
+      else if (+target.value < slider.nameModel.minRange) {
+        handler = {
+          set: nameModel.value = slider.nameModel.minRange
+        } 
+        $(`#value-${parentId}`).val(slider.nameModel.minRange);
+      }
       slider.singleThumb.defaultPosition();
       slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1]);
-      }
     break
     case `step-${parentId}`:
       handler = {
