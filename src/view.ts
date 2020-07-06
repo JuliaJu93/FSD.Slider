@@ -145,12 +145,8 @@ class ElementText {
     }
   }
   changeValueElement(thumb, direction){
-    const position = this.scale.scalePosition();
-    const positionContainer:number = $(this.parentElement).find(".scale").offset()[position.direction];
-    const thumbFirst:number = $(this.parentElement).find(".thumb:first-child").offset()[position.direction];
-    const thumbSecond:number = $(this.parentElement).find(".thumb:last-child").offset()[position.direction];
     let value:number;
-    if (this.nameModel.elementText) { 
+    if (this.nameModel.elementText && direction !== false) { 
       if (this.nameModel.oneThumb){
         value = +($(this.parentElement).find(".thumb:first-child")[0].dataset.element) + +this.nameModel.step*direction;
         $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
@@ -173,13 +169,22 @@ class ElementText {
     else {
       if (this.nameModel.oneThumb){
         value = this.nameModel.value + +this.nameModel.step*direction;
+        if (direction === false) {
+          $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.value;
+        }
       }
       else {
         if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
           value = this.nameModel.values[0] + +this.nameModel.step*direction;
+          if (direction === false) {
+            $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.values[0];
+          }
         }
         else{
           value = this.nameModel.values[1] + +this.nameModel.step*direction;
+          if (direction === false) {
+            $(this.parentElement).find(".thumb:last-child")[0].dataset.element = this.nameModel.values[1];
+          }
         }
       }
     }

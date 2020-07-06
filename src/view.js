@@ -128,12 +128,8 @@ var ElementText = /** @class */ (function () {
         }
     };
     ElementText.prototype.changeValueElement = function (thumb, direction) {
-        var position = this.scale.scalePosition();
-        var positionContainer = $(this.parentElement).find(".scale").offset()[position.direction];
-        var thumbFirst = $(this.parentElement).find(".thumb:first-child").offset()[position.direction];
-        var thumbSecond = $(this.parentElement).find(".thumb:last-child").offset()[position.direction];
         var value;
-        if (this.nameModel.elementText) {
+        if (this.nameModel.elementText && direction !== false) {
             if (this.nameModel.oneThumb) {
                 value = +($(this.parentElement).find(".thumb:first-child")[0].dataset.element) + +this.nameModel.step * direction;
                 $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
@@ -156,13 +152,22 @@ var ElementText = /** @class */ (function () {
         else {
             if (this.nameModel.oneThumb) {
                 value = this.nameModel.value + +this.nameModel.step * direction;
+                if (direction === false) {
+                    $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.value;
+                }
             }
             else {
                 if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
                     value = this.nameModel.values[0] + +this.nameModel.step * direction;
+                    if (direction === false) {
+                        $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.values[0];
+                    }
                 }
                 else {
                     value = this.nameModel.values[1] + +this.nameModel.step * direction;
+                    if (direction === false) {
+                        $(this.parentElement).find(".thumb:last-child")[0].dataset.element = this.nameModel.values[1];
+                    }
                 }
             }
         }

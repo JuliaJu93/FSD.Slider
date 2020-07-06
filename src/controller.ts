@@ -86,7 +86,7 @@ function setParameter (nameModel:Model, target, parentId:string, slider:Slider, 
         $(`#values1-${parentId}`).val(slider.nameModel.minRange);
       }
       slider.singleThumb.defaultPosition();
-      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0], 1);
+      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0], false);
     break
     case `values2-${parentId}`:
       if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value >= slider.nameModel.values[0])){
@@ -107,7 +107,7 @@ function setParameter (nameModel:Model, target, parentId:string, slider:Slider, 
         $(`#values2-${parentId}`).val(slider.nameModel.minRange);
       }
       slider.singleThumb.defaultPosition();
-      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], 1);
+      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], false);
     break
     case `value-${parentId}`:
       if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange)) {
@@ -128,7 +128,7 @@ function setParameter (nameModel:Model, target, parentId:string, slider:Slider, 
         $(`#value-${parentId}`).val(slider.nameModel.minRange);
       }
       slider.singleThumb.defaultPosition();
-      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], 1);
+      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], false);
     break
     case `step-${parentId}`:
       handler = {
