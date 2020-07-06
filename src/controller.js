@@ -37,15 +37,34 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
             handler = {
                 set: nameModel.minRange = +target.value
             };
-            slider.container.deleteContainer();
-            slider.createSlider();
+            if (nameModel.minRange < nameModel.maxRange) {
+                //Проверки на изменения минимума
+                if (nameModel.minRange > nameModel.value) {
+                    nameModel.value = nameModel.minRange;
+                }
+                if (nameModel.minRange > nameModel.values[0]) {
+                    nameModel.values[0] = nameModel.minRange;
+                }
+                slider.container.deleteContainer();
+                slider.createSlider();
+            }
             break;
         case "max-" + parentId:
             handler = {
                 set: nameModel.maxRange = +target.value
             };
-            slider.container.deleteContainer();
-            slider.createSlider();
+            if (nameModel.minRange < nameModel.maxRange) {
+                //Проверки на изменения максимума
+                if (nameModel.maxRange < nameModel.value) {
+                    nameModel.value = nameModel.maxRange;
+                }
+                if (nameModel.maxRange < nameModel.values[1]) {
+                    nameModel.values[1] = nameModel.maxRange;
+                }
+                console.log(nameModel.values[1]);
+                slider.container.deleteContainer();
+                slider.createSlider();
+            }
             break;
         case "thumb-" + parentId:
             handler = {
@@ -165,10 +184,10 @@ var ControlPanel = /** @class */ (function () {
         $(this.parentElement).find(".containerRow:nth-child(1)").append($("<input type=checkbox id='position-" + parentId + "' " + position + "></input>"));
         $(this.parentElement).find(".containerRow:nth-child(2)").append($("<label for=\"min-" + parentId + "\"></label>"));
         $(this.parentElement).find(".containerRow:nth-child(2) label").text('Minimum value');
-        $(this.parentElement).find(".containerRow:nth-child(2)").append($("<input id=\"min-" + parentId + "\" type=number value=" + this.nameModel.minRange + " min=0></input>"));
+        $(this.parentElement).find(".containerRow:nth-child(2)").append($("<input id=\"min-" + parentId + "\" type=number value=" + this.nameModel.minRange + " min=0 max = " + (this.nameModel.maxRange - 10) + "></input>"));
         $(this.parentElement).find(".containerRow:nth-child(3)").append($("<label for=\"max-" + parentId + "\"></label>"));
         $(this.parentElement).find(".containerRow:nth-child(3) label").text('Maximum value');
-        $(this.parentElement).find(".containerRow:nth-child(3)").append($("<input id=\"max-" + parentId + "\" type=number value=" + this.nameModel.maxRange + " min=0></input>"));
+        $(this.parentElement).find(".containerRow:nth-child(3)").append($("<input id=\"max-" + parentId + "\" type=number value=" + this.nameModel.maxRange + " min=" + (this.nameModel.minRange + 10) + "></input>"));
         $(this.parentElement).find(".containerRow:nth-child(4)").append($("<label for=\"thumb-" + parentId + "\"></label>"));
         $(this.parentElement).find(".containerRow:nth-child(4) label").text('One thumb');
         var thumb;

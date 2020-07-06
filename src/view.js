@@ -338,12 +338,12 @@ var Slider = /** @class */ (function () {
     return Slider;
 }());
 exports.Slider = Slider;
-var model1 = new model_js_1.Model({ name: 'model1', sliderWidth: 400, positionHorizontal: true, minRange: 0, maxRange: 200, oneThumb: false, values: [50, 180], value: 180, step: 10, elementText: true });
+var model1 = new model_js_1.Model({ name: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 30, maxRange: 200, oneThumb: false, values: [50, 180], value: 180, step: 10, elementText: true });
 var slider1 = new Slider('SliderOne', 'Scale1', ".container1", model1);
 slider1.createSlider();
 var controlPanel1 = new controller_js_1.ControlPanel('panel1', ".containerPanel1", model1, slider1);
 controlPanel1.createControlPanel();
-var model2 = new model_js_1.Model({ name: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 30, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true });
+var model2 = new model_js_1.Model({ name: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 0, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true });
 var slider2 = new Slider('Slidertwo', 'Scale2', ".container2", model2);
 slider2.createSlider();
 var controlPanel2 = new controller_js_1.ControlPanel('panel2', ".containerPanel2", model2, slider2);
