@@ -127,30 +127,42 @@ var ElementText = /** @class */ (function () {
             }
         }
     };
-    ElementText.prototype.changeValueElement = function (thumb) {
+    ElementText.prototype.changeValueElement = function (thumb, direction) {
         var position = this.scale.scalePosition();
         var positionContainer = $(this.parentElement).find(".scale").offset()[position.direction];
         var thumbFirst = $(this.parentElement).find(".thumb:first-child").offset()[position.direction];
         var thumbSecond = $(this.parentElement).find(".thumb:last-child").offset()[position.direction];
         var value;
-        var UnitRatio = this.nameModel.sliderWidth / (this.nameModel.maxRange - this.nameModel.minRange);
-        if (this.nameModel.oneThumb) {
-            value = Math.trunc(((thumbFirst - positionContainer) / UnitRatio) + this.nameModel.minRange);
-            if (this.nameModel.elementText) {
+        if (this.nameModel.elementText) {
+            if (this.nameModel.oneThumb) {
+                value = +($(this.parentElement).find(".thumb:first-child")[0].dataset.element) + +this.nameModel.step * direction;
                 $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
+            }
+            else {
+                if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
+                    if (this.nameModel.elementText) {
+                        value = +($(this.parentElement).find(".thumb:first-child")[0].dataset.element) + +this.nameModel.step * direction;
+                        $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
+                    }
+                }
+                else {
+                    if (this.nameModel.elementText) {
+                        value = +($(this.parentElement).find(".thumb:last-child")[0].dataset.element) + +this.nameModel.step * direction;
+                        $(this.parentElement).find(".thumb:last-child")[0].dataset.element = value;
+                    }
+                }
             }
         }
         else {
-            if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
-                value = Math.trunc(((thumbFirst - positionContainer) / UnitRatio) + this.nameModel.minRange);
-                if (this.nameModel.elementText) {
-                    $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
-                }
+            if (this.nameModel.oneThumb) {
+                value = this.nameModel.value + +this.nameModel.step * direction;
             }
             else {
-                value = Math.trunc(((thumbSecond - positionContainer) / UnitRatio) + this.nameModel.minRange);
-                if (this.nameModel.elementText) {
-                    $(this.parentElement).find(".thumb:last-child")[0].dataset.element = value;
+                if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
+                    value = this.nameModel.values[0] + +this.nameModel.step * direction;
+                }
+                else {
+                    value = this.nameModel.values[1] + +this.nameModel.step * direction;
                 }
             }
         }
@@ -222,15 +234,16 @@ var Thumb = /** @class */ (function () {
                     if (coord + step >= start && coord + step <= end) {
                         // Двигаем ручки вперед
                         thumb.style[direction] = coord + step + 'px';
+                        _this.elementText.changeValueElement(thumb, 1);
                     }
                 }
                 else if (cursorPosition < coord - step) {
                     if (coord - step >= start && coord - step <= end) {
                         // Двигаем ручки назад
                         thumb.style[direction] = coord - step + 'px';
+                        _this.elementText.changeValueElement(thumb, -1);
                     }
                 }
-                _this.elementText.changeValueElement(thumb);
                 _this.interval.widthInterval();
             });
             $(document).mouseup(function () {
