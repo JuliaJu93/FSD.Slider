@@ -1,5 +1,6 @@
 import './pages/index.scss'
-import './controller'
 import './model'
+import './controller'
 import './view'
+import './test'
 

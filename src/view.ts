@@ -169,20 +169,20 @@ class ElementText {
     else {
       if (this.nameModel.oneThumb){
         value = this.nameModel.value + +this.nameModel.step*direction;
-        if (direction === false) {
+        if (direction === false && this.nameModel.elementText) {
           $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.value;
         }
       }
       else {
         if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
           value = this.nameModel.values[0] + +this.nameModel.step*direction;
-          if (direction === false) {
+          if (direction === false && this.nameModel.elementText) {
             $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.values[0];
           }
         }
-        else{
+        else {
           value = this.nameModel.values[1] + +this.nameModel.step*direction;
-          if (direction === false) {
+          if (direction === false && this.nameModel.elementText) {
             $(this.parentElement).find(".thumb:last-child")[0].dataset.element = this.nameModel.values[1];
           }
         }
@@ -211,7 +211,7 @@ class Thumb {
   }
   createThumb() {
     $(this.parentElement).find(".scale").append($('<span class="thumb"></span>'));
-    if (this.nameModel.positionHorizontal){
+    if (this.nameModel.positionHorizontal) {
       $(this.parentElement).find(".thumb").css("bottom", ("-7px"));
     }
     else {
@@ -281,7 +281,7 @@ class Thumb {
     });
   }
   //Позиция ручек по умолчанию
-  defaultPosition(){
+  defaultPosition() {
     const recalculation:Array<number> = this.scale.countToPixels();
     const position = this.scale.scalePosition();
     if (this.nameModel.oneThumb){
@@ -318,7 +318,7 @@ class Interval {
     $(this.parentElement).find(".interval").css(position.size, (width + 'px'));
     $(this.parentElement).find(".interval").css(position.margin, (defaultPosition[0] + 'px'));
   }
-  widthInterval(){
+  widthInterval() {
     const position = this.scale.scalePosition();
     const positionContainer:number = $(this.parentElement).find(".scale").offset()[position.direction];
     const thumbFirst:number = $(this.parentElement).find(".thumb:first-child").offset()[position.direction];
@@ -377,7 +377,7 @@ export class Slider {
   }
 }
 
-let model1:Model  = new Model ({name: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 30, maxRange: 200, oneThumb: false, values: [50, 180], value: 180, step: 10, elementText: true});
+let model1:Model  = new Model ({name: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true});
 let slider1 = new Slider ('SliderOne', 'Scale1', ".container1", model1);
 slider1.createSlider();
 let controlPanel1 = new ControlPanel ('panel1', ".containerPanel1", model1, slider1);
@@ -390,8 +390,8 @@ let controlPanel2 = new ControlPanel ('panel2', ".containerPanel2", model2, slid
 controlPanel2.createControlPanel();
 
 
-let model3:Model = new Model ({name: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 400, oneThumb: true, values: [150, 380], value: 280, step: 40, elementText: false});
-let slider3 = new Slider ('Slidervv', 'Scale3', ".container3", model3);
+let model3:Model = new Model ({name: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 200, oneThumb: true, values: [50, 180], value: 80, step: 40, elementText: false});
+let slider3 = new Slider ('SliderThree', 'Scale3', ".container3", model3);
 slider3.createSlider();
 let controlPanel3 = new ControlPanel ('panel3', ".containerPanel3", model3, slider3);
 controlPanel3.createControlPanel();

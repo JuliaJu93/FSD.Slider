@@ -86,7 +86,7 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
             slider.doubleThumb1.defaultPosition();
             break;
         case "values1-" + parentId:
-            if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value <= slider.nameModel.values[1])) {
+            if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value < slider.nameModel.values[1])) {
                 handler = {
                     set: nameModel.values[0] = +target.value
                 };
@@ -107,7 +107,7 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
             slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0], false);
             break;
         case "values2-" + parentId:
-            if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value >= slider.nameModel.values[0])) {
+            if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value > slider.nameModel.values[0])) {
                 handler = {
                     set: nameModel.values[1] = +target.value
                 };

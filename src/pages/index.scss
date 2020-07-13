@@ -4,6 +4,7 @@
   border: 1px solid #6fcf97;
   padding: 1rem;
   border-radius: 1rem;
+  user-select: none;
 }
 
 .containerColumn {
@@ -33,6 +34,7 @@
 
 p {
   margin: 0;
+  user-select: none;
 }
 
 input {

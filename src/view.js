@@ -152,20 +152,20 @@ var ElementText = /** @class */ (function () {
         else {
             if (this.nameModel.oneThumb) {
                 value = this.nameModel.value + +this.nameModel.step * direction;
-                if (direction === false) {
+                if (direction === false && this.nameModel.elementText) {
                     $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.value;
                 }
             }
             else {
                 if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
                     value = this.nameModel.values[0] + +this.nameModel.step * direction;
-                    if (direction === false) {
+                    if (direction === false && this.nameModel.elementText) {
                         $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.values[0];
                     }
                 }
                 else {
                     value = this.nameModel.values[1] + +this.nameModel.step * direction;
-                    if (direction === false) {
+                    if (direction === false && this.nameModel.elementText) {
                         $(this.parentElement).find(".thumb:last-child")[0].dataset.element = this.nameModel.values[1];
                     }
                 }
@@ -338,7 +338,7 @@ var Slider = /** @class */ (function () {
     return Slider;
 }());
 exports.Slider = Slider;
-var model1 = new model_js_1.Model({ name: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 30, maxRange: 200, oneThumb: false, values: [50, 180], value: 180, step: 10, elementText: true });
+var model1 = new model_js_1.Model({ name: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true });
 var slider1 = new Slider('SliderOne', 'Scale1', ".container1", model1);
 slider1.createSlider();
 var controlPanel1 = new controller_js_1.ControlPanel('panel1', ".containerPanel1", model1, slider1);
@@ -348,8 +348,8 @@ var slider2 = new Slider('Slidertwo', 'Scale2', ".container2", model2);
 slider2.createSlider();
 var controlPanel2 = new controller_js_1.ControlPanel('panel2', ".containerPanel2", model2, slider2);
 controlPanel2.createControlPanel();
-var model3 = new model_js_1.Model({ name: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 400, oneThumb: true, values: [150, 380], value: 280, step: 40, elementText: false });
-var slider3 = new Slider('Slidervv', 'Scale3', ".container3", model3);
+var model3 = new model_js_1.Model({ name: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 200, oneThumb: true, values: [50, 180], value: 80, step: 40, elementText: false });
+var slider3 = new Slider('SliderThree', 'Scale3', ".container3", model3);
 slider3.createSlider();
 var controlPanel3 = new controller_js_1.ControlPanel('panel3', ".containerPanel3", model3, slider3);
 controlPanel3.createControlPanel();
