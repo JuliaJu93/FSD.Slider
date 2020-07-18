@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.Slider = void 0;
+exports.Slider = exports.Container = void 0;
 var $ = require('jquery');
 var model_js_1 = require("./model.js");
 var controller_js_1 = require("./controller.js");
@@ -14,12 +14,14 @@ var Container = /** @class */ (function () {
         $(this.parentElement).append($('<div class="containerOfSlider"></div>'));
         var position = this.scale.scalePosition();
         $(this.parentElement).find(".containerOfSlider").css('flex-direction', position.positionContent);
+        return true;
     };
     Container.prototype.deleteContainer = function () {
         $(this.parentElement).find(".containerOfSlider").remove();
     };
     return Container;
 }());
+exports.Container = Container;
 //Создание Шкалы произвольной ширины, с возможностью изменять ее позицию (горизонтальная или вертикальная)
 var Scale = /** @class */ (function () {
     function Scale(_name, _parentElement, _nameModel) {

@@ -126,19 +126,19 @@ class ElementText {
     const elementFirst = $(this.parentElement).find(".thumb:first-child")[0];
     const elementSecond = $(this.parentElement).find(".thumb:last-child")[0];
     if (this.nameModel.elementText){
-      if(this.nameModel.oneThumb){
+      if (this.nameModel.oneThumb){
         elementFirst.dataset.element = this.nameModel.value;
       }
-      else{
+      else {
         elementFirst.dataset.element = this.nameModel.values[0];
         elementSecond.dataset.element = this.nameModel.values[1];
       }
     }
     else {
-      if(this.nameModel.oneThumb){
+      if (this.nameModel.oneThumb){
         elementFirst.dataset.element = '';
       }
-      else{
+      else {
         elementFirst.dataset.element = '';
         elementSecond.dataset.element = '';
       }
@@ -334,9 +334,11 @@ class Interval {
 
 //Создание ползунка
 export class Slider {
-  name : string;
+  nameSlider : string;
   nameScale:string;
   parentElement:string;
+  model: Model;
+  panel: ControlPanel;
   nameModel:Model;
   scale:Scale;
   container:Container;
@@ -346,24 +348,27 @@ export class Slider {
   singleThumb:Thumb;
   doubleThumb1:Thumb;
   doubleThumb2:Thumb;
-  constructor(_name, _nameScale, _parentElement, _nameModel) {
-    this.name = _name;
-    this.parentElement = _parentElement;
-    this.nameModel = _nameModel;
-    this.scale = new Scale (_nameScale, _parentElement, _nameModel);
-    this.container = new Container ('container', this.scale, _parentElement);
-    this.interval = new Interval ('interval', this.scale, _parentElement, _nameModel);
-    this.elementText = new ElementText ('element', this.scale, _parentElement, _nameModel);
-    this.scaleOfValues = new ScaleOfValues (_nameScale, this.scale, _parentElement, _nameModel);
-    this.singleThumb = new Thumb ('thumbOne', this.scale, this.interval, this.elementText, _parentElement, _nameModel);
-    this.doubleThumb1 = new Thumb ('thumbOne', this.scale, this.interval, this.elementText, _parentElement, _nameModel);
-    this.doubleThumb2 = new Thumb ('thumbTwo', this.scale, this.interval, this.elementText, _parentElement, _nameModel);
+  constructor(_slider, _model, _panel) {
+    this.nameSlider = _slider.nameSlider;
+    this.parentElement = _slider.parentElement;
+    this.nameModel = _slider.nameModel;
+    this.model =  new Model (_model);
+    this.panel = new ControlPanel (_panel, _model,_slider);
+    this.scale = new Scale (_slider.nameScale, _slider.parentElement, this.model);
+    this.container = new Container ('container', this.scale, _slider.parentElement);
+    this.interval = new Interval ('interval', this.scale, _slider.parentElement, this.model);
+    this.elementText = new ElementText ('element', this.scale, _slider.parentElement, this.model);
+    this.scaleOfValues = new ScaleOfValues (_slider.nameScale, this.scale, _slider.parentElement, this.model);
+    this.singleThumb = new Thumb ('thumbOne', this.scale, this.interval, this.elementText, _slider.parentElement, this.model);
+    this.doubleThumb1 = new Thumb ('thumbOne', this.scale, this.interval, this.elementText, _slider.parentElement, this.model);
+    this.doubleThumb2 = new Thumb ('thumbTwo', this.scale, this.interval, this.elementText, _slider.parentElement, this.model);
   }
   createSlider() {
+    this.panel.createControlPanel();
     this.container.createContainer();
     this.scale.createScale();
     this.scaleOfValues.createScaleOfValues();
-    if (this.nameModel.oneThumb){
+    if (this.model.oneThumb){
       this.singleThumb.createThumb();
     }
     else {
@@ -377,21 +382,11 @@ export class Slider {
   }
 }
 
-let model1:Model  = new Model ({name: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true});
-let slider1 = new Slider ('SliderOne', 'Scale1', ".container1", model1);
+export let slider1:Slider = new Slider ({nameSlider:'SliderOne', nameScale:'Scale1', parentElement:".container1"}, {nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true}, {namePanel:'panel1', panelParentElement:".containerPanel1"});
 slider1.createSlider();
-let controlPanel1 = new ControlPanel ('panel1', ".containerPanel1", model1, slider1);
-controlPanel1.createControlPanel();
 
-let model2:Model  = new Model ({name: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 0, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true});
-let slider2 = new Slider ('Slidertwo', 'Scale2', ".container2", model2);
+let slider2:Slider = new Slider ({nameSlider:'SliderTwo', nameScale:'Scale2', parentElement:".container2"}, {name: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 0, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true}, {namePanel:'panel2', panelParentElement:".containerPanel2"});
 slider2.createSlider();
-let controlPanel2 = new ControlPanel ('panel2', ".containerPanel2", model2, slider2);
-controlPanel2.createControlPanel();
 
-
-let model3:Model = new Model ({name: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 200, oneThumb: true, values: [50, 180], value: 80, step: 40, elementText: false});
-let slider3 = new Slider ('SliderThree', 'Scale3', ".container3", model3);
+let slider3:Slider = new Slider ({nameSlider:'SliderThree', nameScale:'Scale3', parentElement:".container3"}, {name: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 200, oneThumb: true, values: [50, 180], value: 80, step: 40, elementText: false}, {namePanel:'panel3', panelParentElement:".containerPanel3"});
 slider3.createSlider();
-let controlPanel3 = new ControlPanel ('panel3', ".containerPanel3", model3, slider3);
-controlPanel3.createControlPanel();
