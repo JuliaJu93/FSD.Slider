@@ -1,11 +1,19 @@
 let $ = require ('jquery')
 
-import  {Container} from '../view.js'
+import  {slider1} from '../view.js'
 
-describe("create container", function() {
+describe("create slider", function() {
 
-  it("создает контейнер для слайдера", function() {
-    assert.equal(new Container().createContainer(),true);
+  it("Контейнер для слайдера был создан", function() {
+    assert.isOk(document.querySelector('.containerOfSlider'));
+  });
+
+  it("Шкала была создана", function() {
+    assert.isOk(document.querySelector('.scale'));
+  });
+
+  it("Шкала значений была создана", function() {
+    assert.isOk(document.querySelector('.scaleOfValues'));
   });
 
 });

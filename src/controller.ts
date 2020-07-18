@@ -170,10 +170,10 @@ export class ControlPanel {
   parentElement: string;
   nameModel: Model;
   slider: Slider;
-  constructor(_name, _parentElement, _nameModel, _slider) {
-    this.name = _name;
-    this.parentElement = _parentElement;
-    this.nameModel = _nameModel;
+  constructor(_panel, _model, _slider) {
+    this.name = _panel.namePanel;
+    this.parentElement = _panel.panelParentElement;
+    this.nameModel = _model;
     this.slider = _slider;
   }
   createControlPanel() {

@@ -164,10 +164,10 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
 }
 //Создание панели управления
 var ControlPanel = /** @class */ (function () {
-    function ControlPanel(_name, _parentElement, _nameModel, _slider) {
-        this.name = _name;
-        this.parentElement = _parentElement;
-        this.nameModel = _nameModel;
+    function ControlPanel(_panel, _model, _slider) {
+        this.name = _panel.namePanel;
+        this.parentElement = _panel.panelParentElement;
+        this.nameModel = _model;
         this.slider = _slider;
     }
     ControlPanel.prototype.createControlPanel = function () {

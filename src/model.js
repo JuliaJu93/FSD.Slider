@@ -3,7 +3,7 @@ exports.__esModule = true;
 exports.Model = void 0;
 var Model = /** @class */ (function () {
     function Model(_model) {
-        this.name = _model.name,
+        this.nameModel = _model.nameModel,
             this.sliderWidth = _model.sliderWidth,
             this.positionHorizontal = _model.positionHorizontal,
             this.minRange = _model.minRange,

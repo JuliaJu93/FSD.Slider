@@ -1,5 +1,5 @@
 export class Model {
-  name:string;
+  nameModel:string;
   sliderWidth:number;
   positionHorizontal:boolean;
   minRange:number;
@@ -10,7 +10,7 @@ export class Model {
   step:number;
   elementText:boolean;
   constructor(_model:Model) {
-    this.name = _model.name,
+    this.nameModel = _model.nameModel,
     this.sliderWidth = _model.sliderWidth,
     this.positionHorizontal = _model.positionHorizontal,
     this.minRange = _model.minRange,
