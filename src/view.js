@@ -14,7 +14,6 @@ var Container = /** @class */ (function () {
         $(this.parentElement).append($('<div class="containerOfSlider"></div>'));
         var position = this.scale.scalePosition();
         $(this.parentElement).find(".containerOfSlider").css('flex-direction', position.positionContent);
-        return true;
     };
     Container.prototype.deleteContainer = function () {
         $(this.parentElement).find(".containerOfSlider").remove();
@@ -308,10 +307,10 @@ var Interval = /** @class */ (function () {
 //Создание ползунка
 var Slider = /** @class */ (function () {
     function Slider(_slider, _model, _panel) {
+        this.model = _model;
         this.nameSlider = _slider.nameSlider;
         this.parentElement = _slider.parentElement;
         this.nameModel = _slider.nameModel;
-        this.model = new model_js_1.Model(_model);
         this.panel = new controller_js_1.ControlPanel(_panel, _model, _slider);
         this.scale = new Scale(_slider.nameScale, _slider.parentElement, this.model);
         this.container = new Container('container', this.scale, _slider.parentElement);
@@ -323,7 +322,6 @@ var Slider = /** @class */ (function () {
         this.doubleThumb2 = new Thumb('thumbTwo', this.scale, this.interval, this.elementText, _slider.parentElement, this.model);
     }
     Slider.prototype.createSlider = function () {
-        this.panel.createControlPanel();
         this.container.createContainer();
         this.scale.createScale();
         this.scaleOfValues.createScaleOfValues();
@@ -339,12 +337,21 @@ var Slider = /** @class */ (function () {
         this.doubleThumb1.thumbMovement();
         this.doubleThumb1.defaultPosition();
     };
+    Slider.prototype.createControlPanel = function (slider) {
+        this.panel.createControlPanel(slider);
+    };
     return Slider;
 }());
 exports.Slider = Slider;
-exports.slider1 = new Slider({ nameSlider: 'SliderOne', nameScale: 'Scale1', parentElement: ".container1" }, { nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true }, { namePanel: 'panel1', panelParentElement: ".containerPanel1" });
+var model1 = new model_js_1.Model({ nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true });
+exports.slider1 = new Slider({ nameSlider: 'SliderOne', nameScale: 'Scale1', parentElement: ".container1" }, model1, { namePanel: 'panel1', panelParentElement: ".containerPanel1" });
 exports.slider1.createSlider();
-var slider2 = new Slider({ nameSlider: 'SliderTwo', nameScale: 'Scale2', parentElement: ".container2" }, { name: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 0, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true }, { namePanel: 'panel2', panelParentElement: ".containerPanel2" });
+exports.slider1.createControlPanel(exports.slider1);
+var model2 = new model_js_1.Model({ nameModel: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 0, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true });
+var slider2 = new Slider({ nameSlider: 'SliderTwo', nameScale: 'Scale2', parentElement: ".container2" }, model2, { namePanel: 'panel2', panelParentElement: ".containerPanel2" });
 slider2.createSlider();
-var slider3 = new Slider({ nameSlider: 'SliderThree', nameScale: 'Scale3', parentElement: ".container3" }, { name: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 200, oneThumb: true, values: [50, 180], value: 80, step: 40, elementText: false }, { namePanel: 'panel3', panelParentElement: ".containerPanel3" });
+slider2.createControlPanel(slider2);
+var model3 = new model_js_1.Model({ nameModel: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 200, oneThumb: true, values: [50, 180], value: 80, step: 40, elementText: false });
+var slider3 = new Slider({ nameSlider: 'SliderThree', nameScale: 'Scale3', parentElement: ".container3" }, model3, { namePanel: 'panel3', panelParentElement: ".containerPanel3" });
 slider3.createSlider();
+slider3.createControlPanel(slider3);

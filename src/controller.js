@@ -22,28 +22,28 @@ $(document).on("onclick", function (event, value, thumb, nameModel, parentElemen
     }
 });
 // Пересохраняем данные в модели при вводе значений в панель управления и обновляем слайдер
-function setParameter(nameModel, target, parentId, slider, parentElement) {
+function setParameter(model, target, parentId, slider, parentElement) {
     var handler = {};
-    nameModel = new Proxy(nameModel, handler);
+    model = new Proxy(model, handler);
     switch (target.id) {
         case "position-" + parentId:
             handler = {
-                set: nameModel.positionHorizontal = $(target).prop("checked")
+                set: model.positionHorizontal = $(target).prop("checked")
             };
             slider.container.deleteContainer();
             slider.createSlider();
             break;
         case "min-" + parentId:
             handler = {
-                set: nameModel.minRange = +target.value
+                set: model.minRange = +target.value
             };
-            if (nameModel.minRange < nameModel.maxRange) {
+            if (model.minRange < model.maxRange) {
                 //Проверки на изменения минимума
-                if (nameModel.minRange > nameModel.value) {
-                    nameModel.value = nameModel.minRange;
+                if (model.minRange > model.value) {
+                    model.value = model.minRange;
                 }
-                if (nameModel.minRange > nameModel.values[0]) {
-                    nameModel.values[0] = nameModel.minRange;
+                if (model.minRange > model.values[0]) {
+                    model.values[0] = model.minRange;
                 }
                 slider.container.deleteContainer();
                 slider.createSlider();
@@ -51,26 +51,25 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
             break;
         case "max-" + parentId:
             handler = {
-                set: nameModel.maxRange = +target.value
+                set: model.maxRange = +target.value
             };
-            if (nameModel.minRange < nameModel.maxRange) {
+            if (model.minRange < model.maxRange) {
                 //Проверки на изменения максимума
-                if (nameModel.maxRange < nameModel.value) {
-                    nameModel.value = nameModel.maxRange;
+                if (model.maxRange < model.value) {
+                    model.value = model.maxRange;
                 }
-                if (nameModel.maxRange < nameModel.values[1]) {
-                    nameModel.values[1] = nameModel.maxRange;
+                if (model.maxRange < model.values[1]) {
+                    model.values[1] = model.maxRange;
                 }
-                console.log(nameModel.values[1]);
                 slider.container.deleteContainer();
                 slider.createSlider();
             }
             break;
         case "thumb-" + parentId:
             handler = {
-                set: nameModel.oneThumb = $(target).prop("checked")
+                set: model.oneThumb = $(target).prop("checked")
             };
-            if (slider.nameModel.oneThumb) {
+            if (slider.model.oneThumb) {
                 slider.interval.deleteInterval();
                 slider.singleThumb.deleteThumb();
                 slider.singleThumb.createThumb();
@@ -86,77 +85,77 @@ function setParameter(nameModel, target, parentId, slider, parentElement) {
             slider.doubleThumb1.defaultPosition();
             break;
         case "values1-" + parentId:
-            if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value < slider.nameModel.values[1])) {
+            if ((+target.value <= model.maxRange) && (+target.value >= model.minRange) && (+target.value < model.values[1])) {
                 handler = {
-                    set: nameModel.values[0] = +target.value
+                    set: model.values[0] = +target.value
                 };
             }
-            else if (+target.value > slider.nameModel.maxRange) {
+            else if (+target.value > model.maxRange) {
                 handler = {
-                    set: nameModel.values[0] = slider.nameModel.maxRange
+                    set: model.values[0] = model.maxRange
                 };
-                $("#values1-" + parentId).val(slider.nameModel.maxRange);
+                $("#values1-" + parentId).val(model.maxRange);
             }
-            else if (+target.value < slider.nameModel.minRange) {
+            else if (+target.value < model.minRange) {
                 handler = {
-                    set: nameModel.values[0] = slider.nameModel.minRange
+                    set: model.values[0] = model.minRange
                 };
-                $("#values1-" + parentId).val(slider.nameModel.minRange);
+                $("#values1-" + parentId).val(model.minRange);
             }
             slider.singleThumb.defaultPosition();
             slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0], false);
             break;
         case "values2-" + parentId:
-            if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange) && (+target.value > slider.nameModel.values[0])) {
+            if ((+target.value <= model.maxRange) && (+target.value >= model.minRange) && (+target.value > model.values[0])) {
                 handler = {
-                    set: nameModel.values[1] = +target.value
+                    set: model.values[1] = +target.value
                 };
             }
-            else if (+target.value > slider.nameModel.maxRange) {
+            else if (+target.value > model.maxRange) {
                 handler = {
-                    set: nameModel.values[1] = slider.nameModel.maxRange
+                    set: model.values[1] = model.maxRange
                 };
-                $("#values2-" + parentId).val(slider.nameModel.maxRange);
+                $("#values2-" + parentId).val(model.maxRange);
             }
-            else if (+target.value < slider.nameModel.minRange) {
+            else if (+target.value < model.minRange) {
                 handler = {
-                    set: nameModel.values[1] = slider.nameModel.minRange
+                    set: model.values[1] = model.minRange
                 };
-                $("#values2-" + parentId).val(slider.nameModel.minRange);
+                $("#values2-" + parentId).val(model.minRange);
             }
             slider.singleThumb.defaultPosition();
             slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], false);
             break;
         case "value-" + parentId:
-            if ((+target.value <= slider.nameModel.maxRange) && (+target.value >= slider.nameModel.minRange)) {
+            if ((+target.value <= model.maxRange) && (+target.value >= model.minRange)) {
                 handler = {
-                    set: nameModel.value = +target.value
+                    set: model.value = +target.value
                 };
             }
-            else if (+target.value > slider.nameModel.maxRange) {
+            else if (+target.value > model.maxRange) {
                 handler = {
-                    set: nameModel.value = slider.nameModel.maxRange
+                    set: model.value = model.maxRange
                 };
-                $("#value-" + parentId).val(slider.nameModel.maxRange);
+                $("#value-" + parentId).val(model.maxRange);
             }
-            else if (+target.value < slider.nameModel.minRange) {
+            else if (+target.value < model.minRange) {
                 handler = {
-                    set: nameModel.value = slider.nameModel.minRange
+                    set: model.value = model.minRange
                 };
-                $("#value-" + parentId).val(slider.nameModel.minRange);
+                $("#value-" + parentId).val(model.minRange);
             }
             slider.singleThumb.defaultPosition();
             slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], false);
             break;
         case "step-" + parentId:
             handler = {
-                set: nameModel.step = +target.value
+                set: model.step = +target.value
             };
             slider.singleThumb.thumbMovement();
             break;
         case "text-" + parentId:
             handler = {
-                set: nameModel.elementText = $(target).prop("checked")
+                set: model.elementText = $(target).prop("checked")
             };
             slider.elementText.createElementText();
             break;
@@ -170,7 +169,7 @@ var ControlPanel = /** @class */ (function () {
         this.nameModel = _model;
         this.slider = _slider;
     }
-    ControlPanel.prototype.createControlPanel = function () {
+    ControlPanel.prototype.createControlPanel = function (slider) {
         var parentId = $(this.parentElement).attr('id');
         for (var i = 0; i < 8; i++) {
             $(this.parentElement).append($('<div class="containerRow"></div>'));
@@ -211,13 +210,13 @@ var ControlPanel = /** @class */ (function () {
             element = 'checked';
         }
         $(this.parentElement).find(".containerRow:nth-child(8)").append($("<input id=\"text-" + parentId + "\" type=checkbox " + element + "></input>"));
-        this.dataInput(this.slider);
+        this.dataInput(slider);
     };
     ControlPanel.prototype.dataInput = function (slider) {
         var _this = this;
         $("input").change(function () {
             var parentId = $(_this.parentElement).attr('id');
-            setParameter(_this.nameModel, event.target, parentId, _this.slider, $(_this.parentElement).siblings());
+            setParameter(_this.nameModel, event.target, parentId, slider, $(_this.parentElement).siblings());
         });
     };
     ControlPanel.prototype.setValue = function (parentId) {
