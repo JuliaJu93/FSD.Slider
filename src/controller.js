@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.ControlPanel = void 0;
+exports.ControlPanel = exports.setParameter = void 0;
 var $ = require('jquery');
 //Подписчик для View. Получает значение над ручкой ползунка и устанавливает его в панель управления
 $(document).on("onclick", function (event, value, thumb, nameModel, parentElement) {
@@ -41,9 +41,15 @@ function setParameter(model, target, parentId, slider, parentElement) {
                 //Проверки на изменения минимума
                 if (model.minRange > model.value) {
                     model.value = model.minRange;
+                    $("#value-" + parentId).val(model.minRange);
                 }
                 if (model.minRange > model.values[0]) {
                     model.values[0] = model.minRange;
+                    $("#values1-" + parentId).val(model.minRange);
+                }
+                if (model.minRange > model.values[1]) {
+                    model.values[1] = model.maxRange;
+                    $("#values2-" + parentId).val(model.maxRange);
                 }
                 slider.container.deleteContainer();
                 slider.createSlider();
@@ -57,9 +63,15 @@ function setParameter(model, target, parentId, slider, parentElement) {
                 //Проверки на изменения максимума
                 if (model.maxRange < model.value) {
                     model.value = model.maxRange;
+                    $("#value-" + parentId).val(model.maxRange);
                 }
                 if (model.maxRange < model.values[1]) {
                     model.values[1] = model.maxRange;
+                    $("#values2-" + parentId).val(model.maxRange);
+                }
+                if (model.maxRange < model.values[0]) {
+                    model.values[0] = model.minRange;
+                    $("#values1-" + parentId).val(model.minRange);
                 }
                 slider.container.deleteContainer();
                 slider.createSlider();
@@ -161,6 +173,7 @@ function setParameter(model, target, parentId, slider, parentElement) {
             break;
     }
 }
+exports.setParameter = setParameter;
 //Создание панели управления
 var ControlPanel = /** @class */ (function () {
     function ControlPanel(_panel, _model, _slider) {
@@ -196,10 +209,11 @@ var ControlPanel = /** @class */ (function () {
         $(this.parentElement).find(".containerRow:nth-child(4)").append($("<input id=\"thumb-" + parentId + "\" type=checkbox " + thumb + "></input>"));
         $(this.parentElement).find(".containerRow:nth-child(5)").append($("<label for=\"value-" + parentId + "\"></label>"));
         $(this.parentElement).find(".containerRow:nth-child(5) label").text('Thumb value');
-        this.setValue(parentId);
+        $(this.parentElement).find(".containerRow:nth-child(5)").append($("<input id=\"value-" + parentId + "\" type=number value=" + this.nameModel.value + " min=" + this.nameModel.minRange + " max=" + this.nameModel.maxRange + "></input>"));
         $(this.parentElement).find(".containerRow:nth-child(6)").append($("<label for=\"values1-" + parentId + "\"></label>"));
         $(this.parentElement).find(".containerRow:nth-child(6) label").text('Thumbs values');
-        this.setValues(parentId);
+        $(this.parentElement).find(".containerRow:nth-child(6)").append($("<input id=\"values1-" + parentId + "\" type=number value=" + this.nameModel.values[0] + " min=" + this.nameModel.minRange + " max=" + this.nameModel.maxRange + "></input>"));
+        $(this.parentElement).find(".containerRow:nth-child(6)").append($("<input id=\"values2-" + parentId + "\"type=number value=" + this.nameModel.values[1] + " min=" + this.nameModel.minRange + " max=" + this.nameModel.maxRange + "></input>"));
         $(this.parentElement).find(".containerRow:nth-child(7)").append($("<label for=\"step-" + parentId + "\"></label>"));
         $(this.parentElement).find(".containerRow:nth-child(7) label").text('Step');
         $(this.parentElement).find(".containerRow:nth-child(7)").append($("<input id=\"step-" + parentId + "\" type=number value=" + this.nameModel.step + " min=1></input>"));
@@ -218,13 +232,6 @@ var ControlPanel = /** @class */ (function () {
             var parentId = $(_this.parentElement).attr('id');
             setParameter(_this.nameModel, event.target, parentId, slider, $(_this.parentElement).siblings());
         });
-    };
-    ControlPanel.prototype.setValue = function (parentId) {
-        $(this.parentElement).find(".containerRow:nth-child(5)").append($("<input id=\"value-" + parentId + "\" type=number value=" + this.nameModel.value + " min=" + this.nameModel.minRange + " max=" + this.nameModel.maxRange + "></input>"));
-    };
-    ControlPanel.prototype.setValues = function (parentId) {
-        $(this.parentElement).find(".containerRow:nth-child(6)").append($("<input id=\"values1-" + parentId + "\" type=number value=" + this.nameModel.values[0] + " min=" + this.nameModel.minRange + " max=" + this.nameModel.maxRange + "></input>"));
-        $(this.parentElement).find(".containerRow:nth-child(6)").append($("<input id=\"values2-" + parentId + "\"type=number value=" + this.nameModel.values[1] + " min=" + this.nameModel.minRange + " max=" + this.nameModel.maxRange + "></input>"));
     };
     return ControlPanel;
 }());

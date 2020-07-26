@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.slider1 = exports.Slider = void 0;
+exports.slider1 = exports.model1 = exports.Slider = void 0;
 var $ = require('jquery');
 var model_js_1 = require("./model.js");
 var controller_js_1 = require("./controller.js");
@@ -343,8 +343,8 @@ var Slider = /** @class */ (function () {
     return Slider;
 }());
 exports.Slider = Slider;
-var model1 = new model_js_1.Model({ nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true });
-exports.slider1 = new Slider({ nameSlider: 'SliderOne', nameScale: 'Scale1', parentElement: ".container1" }, model1, { namePanel: 'panel1', panelParentElement: ".containerPanel1" });
+exports.model1 = new model_js_1.Model({ nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true });
+exports.slider1 = new Slider({ nameSlider: 'SliderOne', nameScale: 'Scale1', parentElement: ".container1" }, exports.model1, { namePanel: 'panel1', panelParentElement: ".containerPanel1" });
 exports.slider1.createSlider();
 exports.slider1.createControlPanel(exports.slider1);
 var model2 = new model_js_1.Model({ nameModel: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 0, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true });

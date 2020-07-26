@@ -384,7 +384,7 @@ export class Slider {
   }
 }
 
-let model1 = new Model ({nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true});
+export let model1 = new Model ({nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true});
 export let slider1:Slider = new Slider ({nameSlider:'SliderOne', nameScale:'Scale1', parentElement:".container1"}, model1, {namePanel:'panel1', panelParentElement:".containerPanel1"});
 slider1.createSlider();
 slider1.createControlPanel(slider1);

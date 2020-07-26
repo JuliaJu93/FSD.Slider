@@ -23,7 +23,7 @@ $(document).on("onclick", function(event:Event, value:number, thumb:HTMLElement,
 });
 
 // Пересохраняем данные в модели при вводе значений в панель управления и обновляем слайдер
-function setParameter (model:Model, target, parentId:string, slider:Slider, parentElement) {
+export function setParameter (model:Model, target, parentId:string, slider:Slider, parentElement) {
   let handler:object = {};
   model = new Proxy (model, handler);
   switch (target.id) {
@@ -40,15 +40,21 @@ function setParameter (model:Model, target, parentId:string, slider:Slider, pare
       }
       if (model.minRange < model.maxRange) {
       //Проверки на изменения минимума
-      if (model.minRange > model.value) {
-        model.value = model.minRange;
-      }
-      if (model.minRange > model.values[0]) {
-        model.values[0] = model.minRange;
-      }
-      slider.container.deleteContainer();
-      slider.createSlider();
-      }
+        if (model.minRange > model.value) {
+          model.value = model.minRange;
+          $(`#value-${parentId}`).val(model.minRange);
+        }
+        if (model.minRange > model.values[0]) {
+          model.values[0] = model.minRange;
+          $(`#values1-${parentId}`).val(model.minRange);
+        }
+        if (model.minRange > model.values[1]) {
+          model.values[1] = model.maxRange;
+          $(`#values2-${parentId}`).val(model.maxRange);
+        }
+        slider.container.deleteContainer();
+        slider.createSlider();
+      } 
     break
     case `max-${parentId}`:
       handler = {
@@ -56,14 +62,20 @@ function setParameter (model:Model, target, parentId:string, slider:Slider, pare
       }
       if (model.minRange < model.maxRange) {
       //Проверки на изменения максимума
-      if (model.maxRange < model.value) {
-        model.value = model.maxRange;
-      }
-      if (model.maxRange < model.values[1]) {
-        model.values[1] = model.maxRange;
-      }
-      slider.container.deleteContainer();
-      slider.createSlider();
+        if (model.maxRange < model.value) {
+          model.value = model.maxRange;
+          $(`#value-${parentId}`).val(model.maxRange);
+        }
+        if (model.maxRange < model.values[1]) {
+          model.values[1] = model.maxRange;
+          $(`#values2-${parentId}`).val(model.maxRange);
+        }
+        if (model.maxRange < model.values[0]) {
+          model.values[0] = model.minRange;
+          $(`#values1-${parentId}`).val(model.minRange);
+        }
+        slider.container.deleteContainer();
+        slider.createSlider();
       }
     break
     case `thumb-${parentId}`:
@@ -207,11 +219,12 @@ export class ControlPanel {
 
     $(this.parentElement).find(".containerRow:nth-child(5)").append($(`<label for="value-${parentId}"></label>`));
     $(this.parentElement).find(".containerRow:nth-child(5) label").text('Thumb value');
-    this.setValue(parentId);
+    $(this.parentElement).find(".containerRow:nth-child(5)").append($(`<input id="value-${parentId}" type=number value=${this.nameModel.value} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
 
     $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<label for="values1-${parentId}"></label>`));
     $(this.parentElement).find(".containerRow:nth-child(6) label").text('Thumbs values');
-    this.setValues(parentId);
+    $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values1-${parentId}" type=number value=${this.nameModel.values[0]} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
+    $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values2-${parentId}"type=number value=${this.nameModel.values[1]} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
 
     $(this.parentElement).find(".containerRow:nth-child(7)").append($(`<label for="step-${parentId}"></label>`));
     $(this.parentElement).find(".containerRow:nth-child(7) label").text('Step');
@@ -232,14 +245,5 @@ export class ControlPanel {
       const parentId =  $(this.parentElement).attr('id');
       setParameter(this.nameModel, event.target, parentId, slider, $(this.parentElement).siblings());
     });
-  }
-
-  setValue(parentId:string) {
-    $(this.parentElement).find(".containerRow:nth-child(5)").append($(`<input id="value-${parentId}" type=number value=${this.nameModel.value} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
-  }
-
-  setValues(parentId:string) {
-    $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values1-${parentId}" type=number value=${this.nameModel.values[0]} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
-    $(this.parentElement).find(".containerRow:nth-child(6)").append($(`<input id="values2-${parentId}"type=number value=${this.nameModel.values[1]} min=${this.nameModel.minRange} max=${this.nameModel.maxRange}></input>`));
   }
 }
