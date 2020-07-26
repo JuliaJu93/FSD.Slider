@@ -54,7 +54,8 @@ export function setParameter (model:Model, target, parentId:string, slider:Slide
         }
         slider.container.deleteContainer();
         slider.createSlider();
-      } 
+      }
+      // else return false; 
     break
     case `max-${parentId}`:
       handler = {

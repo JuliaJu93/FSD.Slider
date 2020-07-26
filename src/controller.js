@@ -54,6 +54,7 @@ function setParameter(model, target, parentId, slider, parentElement) {
                 slider.container.deleteContainer();
                 slider.createSlider();
             }
+            // else return false; 
             break;
         case "max-" + parentId:
             handler = {
