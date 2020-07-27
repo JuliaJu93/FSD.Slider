@@ -32,13 +32,13 @@ describe("Слайдер", function () {
 
 describe("Проверка правильности положения слайдера", function () {
 
-  it("Вертикальная позиция устанавлиается верно", function () {
+  it("Вертикальная позиция устанавливается верно", function () {
     $(`#position-${parentId}`).attr('checked', false);
     setParameter(model, document.getElementById(`position-${parentId}`), parentId, slider, parentElementSlider);
     assert.isOk(($(parentElementSlider).find('.scale').css('width') > $(parentElementSlider).find('.scale').css('height')));
   });
 
-  it("Горизонтальная позиция устанавлиается верно", function () {
+  it("Горизонтальная позиция устанавливается верно", function () {
     $(`#position-${parentId}`).attr('checked', true);
     setParameter(model, document.getElementById(`position-${parentId}`), parentId, slider, parentElementSlider);
     assert.isOk(($(parentElementSlider).find('.scale').css('width') < $(parentElementSlider).find('.scale').css('height')));
@@ -146,6 +146,22 @@ describe("Проверка максимального значения", functio
     setParameter(model, document.getElementById(`min-${parentId}`), parentId, slider, parentElementSlider);
     assert.isOk(model.maxRange > model.minRange);
   });
+});
+
+describe("Проверка правильности количества ручек", function () {
+
+  it("Одиночная ручка устанавливается верно", function () {
+    $(`#thumb-${parentId}`).attr('checked', true);
+    setParameter(model, document.getElementById(`thumb-${parentId}`), parentId, slider, parentElementSlider);
+    assert.isNotOk(document.querySelector(`${parentElementSlider} .thumb:nth-child(2)`));
+  });
+
+  it("Двойная ручка устанавливается верно", function () {
+    $(`#thumb-${parentId}`).attr('checked', false);
+    setParameter(model, document.getElementById(`thumb-${parentId}`), parentId, slider, parentElementSlider);
+    assert.isOk(document.querySelector(`${parentElementSlider} .thumb:last-child`));
+  });
+
 });
 
 mocha.run();
