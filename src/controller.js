@@ -54,7 +54,14 @@ function setParameter(model, target, parentId, slider, parentElement) {
                 slider.container.deleteContainer();
                 slider.createSlider();
             }
-            // else return false; 
+            else {
+                handler = {
+                    set: model.minRange = 0
+                };
+                $("#min-" + parentId).val(0);
+                slider.container.deleteContainer();
+                slider.createSlider();
+            }
             break;
         case "max-" + parentId:
             handler = {
@@ -74,6 +81,27 @@ function setParameter(model, target, parentId, slider, parentElement) {
                     model.values[0] = model.minRange;
                     $("#values1-" + parentId).val(model.minRange);
                 }
+                slider.container.deleteContainer();
+                slider.createSlider();
+            }
+            else {
+                if (model.maxRange < 0) {
+                    model.maxRange *= -1;
+                }
+                handler = {
+                    set: model.maxRange = +model.maxRange + +model.minRange
+                };
+                if (model.maxRange > model.minRange) {
+                    if (model.maxRange < model.value) {
+                        model.value = model.maxRange;
+                        $("#value-" + parentId).val(model.maxRange);
+                    }
+                    if (model.maxRange < model.values[1]) {
+                        model.values[1] = model.maxRange;
+                        $("#values2-" + parentId).val(model.maxRange);
+                    }
+                }
+                $("#max-" + parentId).val(model.maxRange);
                 slider.container.deleteContainer();
                 slider.createSlider();
             }
