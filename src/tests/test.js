@@ -133,7 +133,7 @@ describe("Проверка максимального значения", functio
   });
 
   it("Если максимальное значение меньше, чем значение обеих ручек, то значение первой ручки равно миниальному значению", function () {
-    let value = +model.values[0] - 10;
+    let value = +model.values[0] - 50;
     $(`#max-${parentId}`).val(value);
     setParameter(model, document.getElementById(`max-${parentId}`), parentId, slider, parentElementSlider);
     let inputForThumb = $(parentElementPanel).find(`#values1-${parentId}`).val();
@@ -141,7 +141,7 @@ describe("Проверка максимального значения", functio
   });
 
   it("Если значение максимума меньше значения минимума, то максимальное значение будет все равно выставляться больше, чем минимальное значение", function () {
-    let value = +model.maxRange + 10;
+    let value = +model.maxRange + 50;
     $(`#min-${parentId}`).val(value);
     setParameter(model, document.getElementById(`min-${parentId}`), parentId, slider, parentElementSlider);
     assert.isOk(model.maxRange > model.minRange);
@@ -160,6 +160,22 @@ describe("Проверка правильности количества руч�
     $(`#thumb-${parentId}`).attr('checked', false);
     setParameter(model, document.getElementById(`thumb-${parentId}`), parentId, slider, parentElementSlider);
     assert.isOk(document.querySelector(`${parentElementSlider} .thumb:last-child`));
+  });
+
+});
+
+describe("Проверка значений над ручками", function () {
+
+  it("Значения над ручками устанавливаются верно", function () {
+    $(`#text-${parentId}`).attr('checked', true);
+    setParameter(model, document.getElementById(`text-${parentId}`), parentId, slider, parentElementSlider);
+    assert.isOk($(parentElementSlider).find('.thumb:first-child')[0].dataset.element);
+  });
+
+  it("Значения над ручками убираются верно", function () {
+    $(`#text-${parentId}`).attr('checked', false);
+    setParameter(model, document.getElementById(`text-${parentId}`), parentId, slider, parentElementSlider);
+    assert.isNotOk($(parentElementSlider).find('.thumb:first-child')[0].dataset.element);
   });
 
 });
