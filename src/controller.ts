@@ -1,6 +1,6 @@
 let $ = require ('jquery')
 import  {Model} from './model.js'
-import  {Slider} from './view.js'
+import  {Scale, Container, Interval, ElementText, ScaleOfValues, Thumb} from './view.js'
 
 //Подписчик для View. Получает значение над ручкой ползунка и устанавливает его в панель управления
 $(document).on("onclick", function(event:Event, value:number, thumb:HTMLElement, nameModel:Model, parentElement:string) {
@@ -114,17 +114,17 @@ export function setParameter (model:Model, target, parentId:string, slider:Slide
       if (slider.model.oneThumb){
         slider.interval.deleteInterval();
         slider.singleThumb.deleteThumb();
-        slider.singleThumb.createThumb();
+        slider.singleThumb.createThumb(model);
       }
       else {
         slider.singleThumb.deleteThumb();
-        slider.doubleThumb1.createThumb();
-        slider.doubleThumb2.createThumb();
-        slider.interval.createInterval();
+        slider.doubleThumb1.createThumb(model);
+        slider.doubleThumb2.createThumb(model);
+        slider.interval.createInterval(model);
       }
-      slider.elementText.createElementText();
-      slider.doubleThumb1.thumbMovement();
-      slider.doubleThumb1.defaultPosition();
+      slider.elementText.createElementText(model);
+      slider.doubleThumb1.thumbMovement(model);
+      slider.doubleThumb1.defaultPosition(model);
     break  
     case `values1-${parentId}`:
       if ((+target.value <= model.maxRange) && (+target.value >= model.minRange) && (+target.value < model.values[1])){
@@ -144,8 +144,8 @@ export function setParameter (model:Model, target, parentId:string, slider:Slide
         } 
         $(`#values1-${parentId}`).val(model.minRange);
       }
-      slider.singleThumb.defaultPosition();
-      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0], false);
+      slider.singleThumb.defaultPosition(this.model.oneThumb);
+      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[0], false, model);
     break
     case `values2-${parentId}`:
       if ((+target.value <= model.maxRange) && (+target.value >= model.minRange) && (+target.value > model.values[0])){
@@ -165,8 +165,8 @@ export function setParameter (model:Model, target, parentId:string, slider:Slide
         } 
         $(`#values2-${parentId}`).val(model.minRange);
       }
-      slider.singleThumb.defaultPosition();
-      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], false);
+      slider.singleThumb.defaultPosition(this.model.oneThumb);
+      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], false, model);
     break
     case `value-${parentId}`:
       if ((+target.value <= model.maxRange) && (+target.value >= model.minRange)) {
@@ -186,21 +186,73 @@ export function setParameter (model:Model, target, parentId:string, slider:Slide
         } 
         $(`#value-${parentId}`).val(model.minRange);
       }
-      slider.singleThumb.defaultPosition();
-      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], false);
+      slider.singleThumb.defaultPosition(this.model.oneThumb);
+      slider.elementText.changeValueElement(parentElement.find(".thumb:first-child")[1], false, model);
     break
     case `step-${parentId}`:
       handler = {
         set: model.step = +target.value
       }
-      slider.singleThumb.thumbMovement();
+      slider.singleThumb.thumbMovement(model);
     break
     case `text-${parentId}`:
       handler = {
         set: model.elementText = $(target).prop("checked")
       }
-      slider.elementText.createElementText();
+      slider.elementText.createElementText(model);
     break   
+  }
+}
+
+//Создание ползунка
+export class Slider {
+  nameSlider : string;
+  nameScale:string;
+  parentElement:string;
+  model: Model;
+  panel: ControlPanel;
+  nameModel:string;
+  scale:Scale;
+  container:Container;
+  interval:Interval;
+  elementText:ElementText;
+  scaleOfValues:ScaleOfValues;
+  singleThumb:Thumb;
+  doubleThumb1:Thumb;
+  doubleThumb2:Thumb;
+  constructor(_slider, _model, _panel) {
+    this.model = _model;
+    this.nameSlider = _slider.nameSlider;
+    this.parentElement = _slider.parentElement;
+    this.nameModel = _slider.nameModel;
+    this.panel = new ControlPanel (_panel, _model, _slider);
+    this.scale = new Scale (_slider.nameScale, _slider.parentElement);
+    this.container = new Container ('container', this.scale, _slider.parentElement);
+    this.interval = new Interval ('interval', this.scale, _slider.parentElement);
+    this.elementText = new ElementText ('element', this.scale, _slider.parentElement);
+    this.scaleOfValues = new ScaleOfValues (_slider.nameScale, this.scale, _slider.parentElement);
+    this.singleThumb = new Thumb ('thumbOne', this.scale, this.interval, this.elementText, _slider.parentElement);
+    this.doubleThumb1 = new Thumb ('thumbOne', this.scale, this.interval, this.elementText, _slider.parentElement);
+    this.doubleThumb2 = new Thumb ('thumbTwo', this.scale, this.interval, this.elementText, _slider.parentElement);
+  }
+  createSlider() {
+    this.container.createContainer(this.model);
+    this.scale.createScale(this.model);
+    this.scaleOfValues.createScaleOfValues(this.model);
+    if (this.model.oneThumb){
+      this.singleThumb.createThumb(this.model);
+    }
+    else {
+      this.doubleThumb1.createThumb(this.model);
+      this.doubleThumb2.createThumb(this.model);
+      this.interval.createInterval(this.model);
+    }
+    this.elementText.createElementText(this.model);
+    this.doubleThumb1.thumbMovement(this.model);
+    this.doubleThumb1.defaultPosition(this.model);
+  }
+  createControlPanel(slider:Slider) {
+    this.panel.createControlPanel(slider);
   }
 }
 
@@ -276,3 +328,18 @@ export class ControlPanel {
     });
   }
 }
+
+export let model1 = new Model ({nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true});
+export let slider1:Slider = new Slider ({nameSlider:'SliderOne', nameScale:'Scale1', parentElement:".container1"}, model1, {namePanel:'panel1', panelParentElement:".containerPanel1"});
+slider1.createSlider();
+slider1.createControlPanel(slider1);
+
+let model2 = new Model ({nameModel: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 0, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true})
+let slider2:Slider = new Slider ({nameSlider:'SliderTwo', nameScale:'Scale2', parentElement:".container2"}, model2, {namePanel:'panel2', panelParentElement:".containerPanel2"});
+slider2.createSlider();
+slider2.createControlPanel(slider2);
+
+let model3 = new Model ({nameModel: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 200, oneThumb: true, values: [50, 180], value: 80, step: 40, elementText: false});
+let slider3:Slider = new Slider ({nameSlider:'SliderThree', nameScale:'Scale3', parentElement:".container3"}, model3, {namePanel:'panel3', panelParentElement:".containerPanel3"});
+slider3.createSlider();
+slider3.createControlPanel(slider3);

@@ -1,18 +1,16 @@
 "use strict";
 exports.__esModule = true;
-exports.slider1 = exports.model1 = exports.Slider = void 0;
+exports.Interval = exports.Thumb = exports.ElementText = exports.ScaleOfValues = exports.Scale = exports.Container = void 0;
 var $ = require('jquery');
-var model_js_1 = require("./model.js");
-var controller_js_1 = require("./controller.js");
 var Container = /** @class */ (function () {
     function Container(_name, _scale, _parentElement) {
         this.name = _name;
         this.parentElement = _parentElement;
         this.scale = _scale;
     }
-    Container.prototype.createContainer = function () {
+    Container.prototype.createContainer = function (model) {
         $(this.parentElement).append($('<div class="containerOfSlider"></div>'));
-        var position = this.scale.scalePosition();
+        var position = this.scale.scalePosition(model);
         $(this.parentElement).find(".containerOfSlider").css('flex-direction', position.positionContent);
     };
     Container.prototype.deleteContainer = function () {
@@ -20,35 +18,35 @@ var Container = /** @class */ (function () {
     };
     return Container;
 }());
+exports.Container = Container;
 //Создание Шкалы произвольной ширины, с возможностью изменять ее позицию (горизонтальная или вертикальная)
 var Scale = /** @class */ (function () {
-    function Scale(_name, _parentElement, _nameModel) {
+    function Scale(_name, _parentElement) {
         this.name = _name;
         this.parentElement = _parentElement;
-        this.nameModel = _nameModel;
     }
-    Scale.prototype.createScale = function () {
+    Scale.prototype.createScale = function (model) {
         $(this.parentElement).find(".containerOfSlider").append($('<div class="scale"></div>'));
-        var position = this.scalePosition();
-        $(this.parentElement).find(".scale").css(position.size, this.nameModel.sliderWidth + 16);
+        var position = this.scalePosition(model);
+        $(this.parentElement).find(".scale").css(position.size, model.sliderWidth + 16);
     };
     //Пересчет значений в модели на пиксели;
-    Scale.prototype.countToPixels = function () {
+    Scale.prototype.countToPixels = function (model) {
         var recalculation = [];
-        var UnitRatio = this.nameModel.sliderWidth / (this.nameModel.maxRange - this.nameModel.minRange);
-        if (this.nameModel.oneThumb) {
-            recalculation[0] = (this.nameModel.value - this.nameModel.minRange) * UnitRatio;
+        var UnitRatio = model.sliderWidth / (model.maxRange - model.minRange);
+        if (model.oneThumb) {
+            recalculation[0] = (model.value - model.minRange) * UnitRatio;
         }
         else {
-            recalculation[0] = (this.nameModel.values[0] - this.nameModel.minRange) * UnitRatio;
-            recalculation[1] = (this.nameModel.values[1] - this.nameModel.minRange) * UnitRatio;
+            recalculation[0] = (model.values[0] - model.minRange) * UnitRatio;
+            recalculation[1] = (model.values[1] - model.minRange) * UnitRatio;
         }
         return recalculation;
     };
     // Параметры, которые зависят от положения шкалы
-    Scale.prototype.scalePosition = function () {
+    Scale.prototype.scalePosition = function (model) {
         var direction, margin, size, intervalPosition, positionContent, reversePosition;
-        if (this.nameModel.positionHorizontal) {
+        if (model.positionHorizontal) {
             direction = 'left';
             margin = 'margin-left';
             size = 'width';
@@ -71,54 +69,54 @@ var Scale = /** @class */ (function () {
     };
     return Scale;
 }());
+exports.Scale = Scale;
 // Шкала со значениями под ползунком
 var ScaleOfValues = /** @class */ (function () {
-    function ScaleOfValues(_name, _scale, _parentElement, _nameModel) {
+    function ScaleOfValues(_name, _scale, _parentElement) {
         this.name = _name;
         this.parentElement = _parentElement;
-        this.nameModel = _nameModel;
         this.scale = _scale;
     }
-    ScaleOfValues.prototype.createScaleOfValues = function () {
-        var position = this.scale.scalePosition();
+    ScaleOfValues.prototype.createScaleOfValues = function (model) {
+        var position = this.scale.scalePosition(model);
         $(this.parentElement).find(".scale").after($('<div class="scaleOfValues"></div>'));
-        $(this.parentElement).find(".scaleOfValues").css(position.size, this.nameModel.sliderWidth + 16 * 1.35);
+        $(this.parentElement).find(".scaleOfValues").css(position.size, model.sliderWidth + 16 * 1.35);
         $(this.parentElement).find(".scaleOfValues").css('flex-direction', position.reversePosition);
         $(this.parentElement).find(".scaleOfValues").append($('<p></p>'));
         $(this.parentElement).find(".scaleOfValues").append($('<p></p>'));
         if (position.positionContent === 'row') {
             $(this.parentElement).find("p").css('margin', '0 1rem');
         }
-        $(this.parentElement).find("p:first-child").text(this.nameModel.minRange);
-        $(this.parentElement).find("p:last-child").text(this.nameModel.maxRange);
+        $(this.parentElement).find("p:first-child").text(model.minRange);
+        $(this.parentElement).find("p:last-child").text(model.maxRange);
     };
     ScaleOfValues.prototype.deleteScaleOfValues = function () {
         $(this.parentElement).find(".scaleOfValues").remove();
     };
     return ScaleOfValues;
 }());
+exports.ScaleOfValues = ScaleOfValues;
 //Значение над ручками
 var ElementText = /** @class */ (function () {
-    function ElementText(_name, _scale, _parentElement, _nameModel) {
+    function ElementText(_name, _scale, _parentElement) {
         this.name = _name;
         this.parentElement = _parentElement;
-        this.nameModel = _nameModel;
         this.scale = _scale;
     }
-    ElementText.prototype.createElementText = function () {
+    ElementText.prototype.createElementText = function (model) {
         var elementFirst = $(this.parentElement).find(".thumb:first-child")[0];
         var elementSecond = $(this.parentElement).find(".thumb:last-child")[0];
-        if (this.nameModel.elementText) {
-            if (this.nameModel.oneThumb) {
-                elementFirst.dataset.element = this.nameModel.value;
+        if (model.elementText) {
+            if (model.oneThumb) {
+                elementFirst.dataset.element = model.value;
             }
             else {
-                elementFirst.dataset.element = this.nameModel.values[0];
-                elementSecond.dataset.element = this.nameModel.values[1];
+                elementFirst.dataset.element = model.values[0];
+                elementSecond.dataset.element = model.values[1];
             }
         }
         else {
-            if (this.nameModel.oneThumb) {
+            if (model.oneThumb) {
                 elementFirst.dataset.element = '';
             }
             else {
@@ -127,68 +125,68 @@ var ElementText = /** @class */ (function () {
             }
         }
     };
-    ElementText.prototype.changeValueElement = function (thumb, direction) {
+    ElementText.prototype.changeValueElement = function (thumb, direction, model) {
         var value;
-        if (this.nameModel.elementText && direction !== false) {
-            if (this.nameModel.oneThumb) {
-                value = +($(this.parentElement).find(".thumb:first-child")[0].dataset.element) + +this.nameModel.step * direction;
+        if (model.elementText && direction !== false) {
+            if (model.oneThumb) {
+                value = +($(this.parentElement).find(".thumb:first-child")[0].dataset.element) + +model.step * direction;
                 $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
             }
             else {
                 if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
-                    if (this.nameModel.elementText) {
-                        value = +($(this.parentElement).find(".thumb:first-child")[0].dataset.element) + +this.nameModel.step * direction;
+                    if (model.elementText) {
+                        value = +($(this.parentElement).find(".thumb:first-child")[0].dataset.element) + +model.step * direction;
                         $(this.parentElement).find(".thumb:first-child")[0].dataset.element = value;
                     }
                 }
                 else {
-                    if (this.nameModel.elementText) {
-                        value = +($(this.parentElement).find(".thumb:last-child")[0].dataset.element) + +this.nameModel.step * direction;
+                    if (model.elementText) {
+                        value = +($(this.parentElement).find(".thumb:last-child")[0].dataset.element) + +model.step * direction;
                         $(this.parentElement).find(".thumb:last-child")[0].dataset.element = value;
                     }
                 }
             }
         }
         else {
-            if (this.nameModel.oneThumb) {
-                value = this.nameModel.value + +this.nameModel.step * direction;
-                if (direction === false && this.nameModel.elementText) {
-                    $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.value;
+            if (model.oneThumb) {
+                value = model.value + +model.step * direction;
+                if (direction === false && model.elementText) {
+                    $(this.parentElement).find(".thumb:first-child")[0].dataset.element = model.value;
                 }
             }
             else {
                 if (thumb === $(this.parentElement).find(".thumb:first-child")[0]) {
-                    value = this.nameModel.values[0] + +this.nameModel.step * direction;
-                    if (direction === false && this.nameModel.elementText) {
-                        $(this.parentElement).find(".thumb:first-child")[0].dataset.element = this.nameModel.values[0];
+                    value = model.values[0] + +model.step * direction;
+                    if (direction === false && model.elementText) {
+                        $(this.parentElement).find(".thumb:first-child")[0].dataset.element = model.values[0];
                     }
                 }
                 else {
-                    value = this.nameModel.values[1] + +this.nameModel.step * direction;
-                    if (direction === false && this.nameModel.elementText) {
-                        $(this.parentElement).find(".thumb:last-child")[0].dataset.element = this.nameModel.values[1];
+                    value = model.values[1] + +model.step * direction;
+                    if (direction === false && model.elementText) {
+                        $(this.parentElement).find(".thumb:last-child")[0].dataset.element = model.values[1];
                     }
                 }
             }
         }
         //Публикация
-        $(document).trigger("onclick", [value, thumb, this.nameModel, this.parentElement]);
+        $(document).trigger("onclick", [value, thumb, model, this.parentElement]);
     };
     return ElementText;
 }());
+exports.ElementText = ElementText;
 // Ручки
 var Thumb = /** @class */ (function () {
-    function Thumb(_name, _scale, _interval, _elementText, _parentElement, _nameModel) {
+    function Thumb(_name, _scale, _interval, _elementText, _parentElement) {
         this.name = _name;
         this.parentElement = _parentElement;
-        this.nameModel = _nameModel;
         this.scale = _scale;
         this.interval = _interval;
         this.elementText = _elementText;
     }
-    Thumb.prototype.createThumb = function () {
+    Thumb.prototype.createThumb = function (model) {
         $(this.parentElement).find(".scale").append($('<span class="thumb"></span>'));
-        if (this.nameModel.positionHorizontal) {
+        if (model.positionHorizontal) {
             $(this.parentElement).find(".thumb").css("bottom", ("-7px"));
         }
         else {
@@ -196,14 +194,14 @@ var Thumb = /** @class */ (function () {
         }
     };
     // Процесс перемещения ручек
-    Thumb.prototype.thumbMovement = function () {
+    Thumb.prototype.thumbMovement = function (model) {
         var _this = this;
         $(this.parentElement).find(".thumb").mousedown(function () {
             var thumb = event.currentTarget;
             $(document).mousemove(function (event) {
                 //В зависимости от горизонтального или вертикального положения шкалы выбираем траекторию движения ручки
                 var direction, cursorPosition;
-                if (_this.nameModel.positionHorizontal) {
+                if (model.positionHorizontal) {
                     direction = 'left';
                     cursorPosition = Math.round(event.pageX - $(_this.parentElement).find(".scale").offset()[direction]);
                 }
@@ -216,13 +214,13 @@ var Thumb = /** @class */ (function () {
                 var start, end;
                 //Движение ручки по заданному шагу
                 //количество шагов, вмещающихся в диапазон
-                var recalculation = (_this.nameModel.maxRange - _this.nameModel.minRange) / _this.nameModel.step;
+                var recalculation = (model.maxRange - model.minRange) / model.step;
                 //количество пикселей в одном шаге
-                var step = Math.trunc(_this.nameModel.sliderWidth / recalculation);
+                var step = Math.trunc(model.sliderWidth / recalculation);
                 //Ограничения для движения слайдера с одной ручкой
-                if (_this.nameModel.oneThumb) {
+                if (model.oneThumb) {
                     start = 0;
-                    end = _this.nameModel.sliderWidth;
+                    end = model.sliderWidth;
                 }
                 //Ограничения для движения слайдера с двумя ручками
                 else if (thumb === $(_this.parentElement).find(".thumb:first-child")[0]) {
@@ -231,7 +229,7 @@ var Thumb = /** @class */ (function () {
                 }
                 else {
                     start = $(_this.parentElement).find(".thumb:first-child").offset()[direction] - positionContainer + 19;
-                    end = _this.nameModel.sliderWidth + 1;
+                    end = model.sliderWidth + 1;
                 }
                 //Проверяем, чтобы ручки не выходили за заданные границы
                 var coord = Number.parseInt(thumb.style[direction]);
@@ -239,17 +237,17 @@ var Thumb = /** @class */ (function () {
                     if (coord + step >= start && coord + step <= end) {
                         // Двигаем ручки вперед
                         thumb.style[direction] = coord + step + 'px';
-                        _this.elementText.changeValueElement(thumb, 1);
+                        _this.elementText.changeValueElement(thumb, 1, model);
                     }
                 }
                 else if (cursorPosition < coord - step) {
                     if (coord - step >= start && coord - step <= end) {
                         // Двигаем ручки назад
                         thumb.style[direction] = coord - step + 'px';
-                        _this.elementText.changeValueElement(thumb, -1);
+                        _this.elementText.changeValueElement(thumb, -1, model);
                     }
                 }
-                _this.interval.widthInterval();
+                _this.interval.widthInterval(model);
             });
             $(document).mouseup(function () {
                 $(document).off("mousemove");
@@ -257,41 +255,41 @@ var Thumb = /** @class */ (function () {
         });
     };
     //Позиция ручек по умолчанию
-    Thumb.prototype.defaultPosition = function () {
-        var recalculation = this.scale.countToPixels();
-        var position = this.scale.scalePosition();
-        if (this.nameModel.oneThumb) {
+    Thumb.prototype.defaultPosition = function (model) {
+        var recalculation = this.scale.countToPixels(model);
+        var position = this.scale.scalePosition(model);
+        if (model.oneThumb) {
             $(this.parentElement).find(".thumb:first-child").css(position.direction, (recalculation + 'px'));
         }
         else {
             $(this.parentElement).find(".thumb:first-child").css(position.direction, (recalculation[0] + 'px'));
             $(this.parentElement).find(".thumb:last-child").css(position.direction, (recalculation[1] + 'px'));
         }
-        this.interval.widthInterval();
+        this.interval.widthInterval(model);
     };
     Thumb.prototype.deleteThumb = function () {
         $(this.parentElement).find(".thumb").remove();
     };
     return Thumb;
 }());
+exports.Thumb = Thumb;
 //Создание закрашенного интервала между двумя ручками интервального ползунка
 var Interval = /** @class */ (function () {
-    function Interval(_name, _scale, _parentElement, _nameModel) {
+    function Interval(_name, _scale, _parentElement) {
         this.name = _name;
         this.scale = _scale;
         this.parentElement = _parentElement;
-        this.nameModel = _nameModel;
     }
-    Interval.prototype.createInterval = function () {
+    Interval.prototype.createInterval = function (model) {
         $(this.parentElement).find(".thumb:first-child").after($('<div class="interval"></div>'));
-        var position = this.scale.scalePosition();
-        var defaultPosition = this.scale.countToPixels();
+        var position = this.scale.scalePosition(model);
+        var defaultPosition = this.scale.countToPixels(model);
         var width = defaultPosition[1] - defaultPosition[0];
         $(this.parentElement).find(".interval").css(position.size, (width + 'px'));
         $(this.parentElement).find(".interval").css(position.margin, (defaultPosition[0] + 'px'));
     };
-    Interval.prototype.widthInterval = function () {
-        var position = this.scale.scalePosition();
+    Interval.prototype.widthInterval = function (model) {
+        var position = this.scale.scalePosition(model);
         var positionContainer = $(this.parentElement).find(".scale").offset()[position.direction];
         var thumbFirst = $(this.parentElement).find(".thumb:first-child").offset()[position.direction];
         var thumbSecond = $(this.parentElement).find(".thumb:last-child").offset()[position.direction];
@@ -304,54 +302,4 @@ var Interval = /** @class */ (function () {
     };
     return Interval;
 }());
-//Создание ползунка
-var Slider = /** @class */ (function () {
-    function Slider(_slider, _model, _panel) {
-        this.model = _model;
-        this.nameSlider = _slider.nameSlider;
-        this.parentElement = _slider.parentElement;
-        this.nameModel = _slider.nameModel;
-        this.panel = new controller_js_1.ControlPanel(_panel, _model, _slider);
-        this.scale = new Scale(_slider.nameScale, _slider.parentElement, this.model);
-        this.container = new Container('container', this.scale, _slider.parentElement);
-        this.interval = new Interval('interval', this.scale, _slider.parentElement, this.model);
-        this.elementText = new ElementText('element', this.scale, _slider.parentElement, this.model);
-        this.scaleOfValues = new ScaleOfValues(_slider.nameScale, this.scale, _slider.parentElement, this.model);
-        this.singleThumb = new Thumb('thumbOne', this.scale, this.interval, this.elementText, _slider.parentElement, this.model);
-        this.doubleThumb1 = new Thumb('thumbOne', this.scale, this.interval, this.elementText, _slider.parentElement, this.model);
-        this.doubleThumb2 = new Thumb('thumbTwo', this.scale, this.interval, this.elementText, _slider.parentElement, this.model);
-    }
-    Slider.prototype.createSlider = function () {
-        this.container.createContainer();
-        this.scale.createScale();
-        this.scaleOfValues.createScaleOfValues();
-        if (this.model.oneThumb) {
-            this.singleThumb.createThumb();
-        }
-        else {
-            this.doubleThumb1.createThumb();
-            this.doubleThumb2.createThumb();
-            this.interval.createInterval();
-        }
-        this.elementText.createElementText();
-        this.doubleThumb1.thumbMovement();
-        this.doubleThumb1.defaultPosition();
-    };
-    Slider.prototype.createControlPanel = function (slider) {
-        this.panel.createControlPanel(slider);
-    };
-    return Slider;
-}());
-exports.Slider = Slider;
-exports.model1 = new model_js_1.Model({ nameModel: 'model1', sliderWidth: 300, positionHorizontal: true, minRange: 40, maxRange: 100, oneThumb: false, values: [50, 80], value: 80, step: 5, elementText: true });
-exports.slider1 = new Slider({ nameSlider: 'SliderOne', nameScale: 'Scale1', parentElement: ".container1" }, exports.model1, { namePanel: 'panel1', panelParentElement: ".containerPanel1" });
-exports.slider1.createSlider();
-exports.slider1.createControlPanel(exports.slider1);
-var model2 = new model_js_1.Model({ nameModel: 'model2', sliderWidth: 200, positionHorizontal: false, minRange: 0, maxRange: 100, oneThumb: false, values: [40, 50], value: 60, step: 1, elementText: true });
-var slider2 = new Slider({ nameSlider: 'SliderTwo', nameScale: 'Scale2', parentElement: ".container2" }, model2, { namePanel: 'panel2', panelParentElement: ".containerPanel2" });
-slider2.createSlider();
-slider2.createControlPanel(slider2);
-var model3 = new model_js_1.Model({ nameModel: 'model3', sliderWidth: 400, positionHorizontal: true, minRange: 10, maxRange: 200, oneThumb: true, values: [50, 180], value: 80, step: 40, elementText: false });
-var slider3 = new Slider({ nameSlider: 'SliderThree', nameScale: 'Scale3', parentElement: ".container3" }, model3, { namePanel: 'panel3', panelParentElement: ".containerPanel3" });
-slider3.createSlider();
-slider3.createControlPanel(slider3);
+exports.Interval = Interval;
